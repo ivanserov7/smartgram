@@ -23,6 +23,16 @@ function atomic(file,value){fs.mkdirSync(path.dirname(file),{recursive:true,mode
 function secureFile(base,relative){const full=fs.realpathSync(path.resolve(base,relative));if(!full.startsWith(fs.realpathSync(base)+path.sep)||!fs.statSync(full).isFile())throw Error('Недопустимый файл.');return full;}
 const hash=v=>crypto.createHash('sha256').update(v).digest('hex');
 const now=()=>new Date().toISOString();
+export const progressStages=JSON.parse(fs.readFileSync(new URL('./progress_stages.json',import.meta.url),'utf8'));
+export function jobProgress(job,raw,clock=Date.now()){
+ const index=progressStages.findIndex(s=>s.id===raw?.stage_id);
+ if(index<0||!Number.isFinite(raw.stage_started_at_ms)||!Number.isFinite(raw.stage_elapsed_seconds))return null;
+ const running=job.status==='running'&&raw.status==='running';
+ const elapsed=running?(clock-raw.stage_started_at_ms)/1000:raw.stage_elapsed_seconds;
+ return {stage_id:progressStages[index].id,stage:progressStages[index].label,stage_index:index,
+  stage_count:progressStages.length,stages:progressStages,stage_elapsed_seconds:Math.max(0,Math.min(86400,elapsed)),
+  running,completed_stages:job.status==='completed'?progressStages.length:index};
+}
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.txt':'text/plain; charset=utf-8','.py':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp'};
 
 export function createPanel(config){
@@ -45,8 +55,8 @@ export function createPanel(config){
    return proof.ready===true&&proof.contract_version===1&&proof.release===fs.realpathSync(config.runner_cwd)&&proof.adapter_sha256===hash(fs.readFileSync(c[1]));
   }catch{return false;}
  }
- function publicJob(j){let stage='';try{const progress=JSON.parse(fs.readFileSync(path.join(jobsDir,j.id,'progress.json'),'utf8'));if(typeof progress.stage==='string')stage=progress.stage.slice(0,150);}catch{}
- return {id:j.id,request:j.request,status:j.status,created_at:j.created_at,started_at:j.started_at,ended_at:j.ended_at,error:j.error,stage:j.status==='running'?stage:''};}
+ function publicJob(j){let stage='',progress=null;try{const raw=JSON.parse(fs.readFileSync(path.join(jobsDir,j.id,'progress.json'),'utf8'));progress=jobProgress(j,raw);if(progress)stage=progress.stage;}catch{}
+ return {id:j.id,request:j.request,status:j.status,created_at:j.created_at,started_at:j.started_at,ended_at:j.ended_at,error:j.error,stage:j.status==='running'?stage:'',progress};}
  function session(req){const raw=(req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith('smartgram_session='))?.slice(18);if(!raw||!/^[-\w]{40,100}$/.test(raw))return null;const key=hash(raw),s=state.sessions[key];return s&&s.expires>Date.now()?key:null;}
  function json(res,status,value,headers={}){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store',...headers});res.end(JSON.stringify(value));}
  async function body(req){if(!String(req.headers['content-type']||'').startsWith('application/json'))throw Object.assign(Error('Ожидается JSON.'),{status:415});let size=0,parts=[];for await(const part of req){size+=part.length;if(size>16384)throw Object.assign(Error('Слишком большой запрос.'),{status:413});parts.push(part);}try{return JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{throw Object.assign(Error('Некорректный JSON.'),{status:400});}}

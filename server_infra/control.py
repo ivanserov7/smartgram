@@ -70,7 +70,7 @@ def health():
 def check():
     clean();rev=git('rev-parse','HEAD').decode().strip()
     run(['runuser','-u','smartgram-dev','--',DEV/'.venv/bin/python',DEV/'server_infra/check.py'],cwd=DEV)
-    run(['runuser','-u','smartgram-dev','--','/opt/smartgram-panel/node/bin/node','--test',DEV/'server_infra/test_panel.mjs'],cwd=DEV)
+    run(['runuser','-u','smartgram-dev','--','/opt/smartgram-panel/node/bin/node','--test',DEV/'server_infra/test_panel.mjs',DEV/'server_infra/test_progress.mjs',DEV/'web_analytics/test_costs.mjs'],cwd=DEV)
     clean();assert rev==git('rev-parse','HEAD').decode().strip()
     atomic(STATE/'checks'/f'{rev}.json',{'revision':rev,'passed':True})
     print(json.dumps({'checked_revision':rev,'passed':True}))
@@ -105,6 +105,9 @@ def deploy(rev):
     panel_release=Path('/opt/smartgram-panel/releases')/('pipeline-'+rev[:16]+'-'+str(time.time_ns()))
     shutil.copytree(PANEL.resolve(),panel_release)
     shutil.copyfile(release/'server_infra/panel_app.mjs',panel_release/'server/app.mjs')
+    shutil.copyfile(release/'server_infra/progress_stages.json',panel_release/'server/progress_stages.json')
+    for source in (release/'server_infra/panel_dist').iterdir():
+        if source.is_file():shutil.copyfile(source,panel_release/'dist'/source.name)
     drain();resumed=False
     try:
         cfg=read(CONFIG);cfg.update(runner_command=[str(ENV/'bin/python'),str(CURRENT/'web_adapter.py')],

@@ -14,6 +14,7 @@ import uuid
 from datetime import datetime, timezone
 
 from file_io import atomic_write_json
+from web_progress import JobProgress
 
 ROOT = Path(__file__).resolve().parent
 FIELDS = {'contract_version','id','topic','target_seconds','output_size','audience','tone','subtitles','notes'}
@@ -80,15 +81,13 @@ def execute(directory, pipeline=None):
             json.dump({'started_at_utc':stamp,'request_id':request['id']},marker);marker.flush();os.fsync(marker.fileno())
     except FileExistsError:raise ValueError('Задание уже запускалось. Автоматический повтор отключён.') from None
     os.environ.update(prepare_job(directory,request))
-    atomic_write_json(directory/'progress.json',{'stage':'Исследование темы'})
+    progress=JobProgress(directory)
     stop=threading.Event()
-    labels={'research':'Исследование темы','script':'Сценарий и проверка','voiceover_and_visuals':'Озвучка и изображения','voiceover':'Озвучка','visuals':'Изображения','editing':'Монтаж и проверка','finished':'Проверка готового ролика'}
     def monitor():
         while not stop.wait(.5):
             for p in (directory/'runs').glob('*/run.json'):
                 try:
-                    state=json.loads(p.read_text());stage=labels.get(state.get('stage'),'Обработка ролика')
-                    atomic_write_json(directory/'progress.json',{'stage':stage})
+                    state=json.loads(p.read_text());progress.update(state.get('stage'))
                 except (OSError,ValueError):pass
     thread=threading.Thread(target=monitor,daemon=True);thread.start()
     try:
@@ -109,9 +108,11 @@ def execute(directory, pipeline=None):
         state_path=run/'run.json';state=json.loads(state_path.read_text());state.update(started_at_utc=stamp,ended_at_utc=now,completed_at_utc=now,duration_seconds=duration)
         atomic_write_json(state_path,state)
         atomic_write_json(directory/'result.json',{'status':'completed','quality_passed':True,'video_sha256':expected,'run_directory':str(run),'duration_seconds':duration})
+    except BaseException:
+        stop.set();thread.join(timeout=2);progress.fail();raise
     finally:
         stop.set();thread.join(timeout=2)
-    atomic_write_json(directory/'progress.json',{'stage':'Готово'})
+    progress.update('delivery',status='completed')
 
 
 def terminate(signum, frame):
@@ -154,7 +155,11 @@ def main():
             # Library stdout may include URLs but no key is allowed in stored diagnostics.
             path=args.job/'diagnostic.log'
             if path.exists():path.write_text(redact(path.read_text(),local_secret_values(dotenv_values(ENV_PATH,interpolate=False),include_environment=True)))
-            atomic_write_json(args.job/'progress.json',{'stage':'Остановлено','error':reason})
+            progress_path=args.job/'progress.json'
+            try:failed=json.loads(progress_path.read_text())
+            except (OSError,ValueError):failed={'stage':'Этап не зафиксирован'}
+            failed.update(status='failed',error=reason)
+            atomic_write_json(progress_path,failed)
             atomic_write_json(args.job/'result.json',{'status':'failed','quality_passed':False,'reason':reason})
         print(json.dumps({'ready':False,'reason':reason},ensure_ascii=False),file=sys.stderr);return 1
 

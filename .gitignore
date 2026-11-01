@@ -29,3 +29,16 @@ node_modules/
 server_data/
 *.pem
 *.key
+auth.json
+**/auth.json
+.codex/
+.ssh/
+*.bundle
+*.zip
+*.mp4
+*.wav
+*.mp3
+*.png
+*.jpg
+*.jpeg
+*.webp
