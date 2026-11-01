@@ -9,7 +9,7 @@ import time
 from fractions import Fraction
 from pathlib import Path
 from PIL import Image
-from media_tools import MediaError, run_command
+from media_tools import MediaError, run_command, limit_ffmpeg
 from production_state import ProductionError, inside, sha
 from subtitles import font_filter
 from visual_sequence import validate_sequence
@@ -113,7 +113,7 @@ def render_video(
     timed_out = threading.Event()
     with tempfile.TemporaryFile() as errors:
         process = subprocess.Popen(
-            [str(v) for v in command],
+            limit_ffmpeg(command),
             stdin=subprocess.PIPE,
             stdout=subprocess.DEVNULL,
             stderr=errors,

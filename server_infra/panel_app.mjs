@@ -35,7 +35,16 @@ export function createPanel(config){
  let active=null,stopping=false;
  for(const j of state.jobs)if(j.status==='running'){j.status='interrupted';j.error='Сервис перезапущен во время обработки. Повторный запуск требует твоего действия.';j.ended_at=now();}
  save();
- function runner(){const c=config.runner_command;return Array.isArray(c)&&c.length>0&&c.every(x=>typeof x==='string')&&path.isAbsolute(c[0])&&fs.existsSync(c[0])&&config.runner_contract===1;}
+ // SMARTGRAM_DRAIN_PROTOCOL_V1: deployment marker gates admission AND queue selection.
+ function maintenance(){return fs.existsSync(path.join(data,'maintenance.json'));}
+ function runner(){
+  try{
+   const c=config.runner_command;
+   if(maintenance()||!Array.isArray(c)||c.length<2||!c.every(x=>typeof x==='string')||!path.isAbsolute(c[0])||!fs.existsSync(c[0])||config.runner_contract!==1||!config.runner_readiness_file)return false;
+   const proof=JSON.parse(fs.readFileSync(config.runner_readiness_file,'utf8'));
+   return proof.ready===true&&proof.contract_version===1&&proof.release===fs.realpathSync(config.runner_cwd)&&proof.adapter_sha256===hash(fs.readFileSync(c[1]));
+  }catch{return false;}
+ }
  function publicJob(j){let stage='';try{const progress=JSON.parse(fs.readFileSync(path.join(jobsDir,j.id,'progress.json'),'utf8'));if(typeof progress.stage==='string')stage=progress.stage.slice(0,150);}catch{}
  return {id:j.id,request:j.request,status:j.status,created_at:j.created_at,started_at:j.started_at,ended_at:j.ended_at,error:j.error,stage:j.status==='running'?stage:''};}
  function session(req){const raw=(req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith('smartgram_session='))?.slice(18);if(!raw||!/^[-\w]{40,100}$/.test(raw))return null;const key=hash(raw),s=state.sessions[key];return s&&s.expires>Date.now()?key:null;}
@@ -65,14 +74,16 @@ export function createPanel(config){
  const sid=session(req);
  if(!sid){if(p.startsWith('/api/'))return json(res,401,{error:'Войди в аккаунт.'});res.writeHead(303,{Location:'/login'});res.end();return;}
  if(p==='/api/logout'&&req.method==='POST'){delete state.sessions[sid];save();return json(res,200,{ok:true},{'Set-Cookie':'smartgram_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0'});}
- if(p==='/api/capabilities'&&req.method==='GET')return json(res,200,{application:'smartgram-studio',generation_ready:runner(),concurrency:1,contract_version:1});
+ if(p==='/api/capabilities'&&req.method==='GET')return json(res,200,{application:'smartgram-studio',generation_ready:runner(),maintenance:maintenance(),supported_subtitles:[true],generation_reason:maintenance()?'Идёт обновление. Очередь сохранена.':runner()?null:'Адаптер не прошёл проверку готовности.',concurrency:1,contract_version:1});
  if(p==='/api/draft'&&req.method==='GET')return json(res,200,{draft:state.draft});
  if(p==='/api/draft'&&req.method==='PUT'){state.draft=validateRequest((await body(req)).draft);save();return json(res,200,{ok:true});}
  if(p==='/api/jobs'&&req.method==='GET')return json(res,200,{jobs:state.jobs.slice().reverse().slice(0,200).map(publicJob)});
  if(p==='/api/jobs'&&req.method==='POST'){
   const b=await body(req),request=validateRequest(b.request);if(typeof b.idempotency_key!=='string'||!/^[-\w]{16,80}$/.test(b.idempotency_key))return json(res,400,{error:'Нет идентификатора запроса.'});
   const old=state.jobs.find(j=>j.idempotency_key===b.idempotency_key);if(old){if(JSON.stringify(old.request)!==JSON.stringify(request))return json(res,409,{error:'Идентификатор уже использован для другого задания.'});return json(res,200,{job:publicJob(old)});}
-  if(!runner())return json(res,409,{error:'Конвейер ещё не подключён. Задание можно сохранить как черновик.'});
+  if(maintenance())return json(res,503,{error:'Идёт обновление. Дождись завершения; очередь сохранена.'});
+  if(!request.subtitles)return json(res,422,{error:'Режим без субтитров пока не подключён к полной проверке монтажа. Включите субтитры.'});
+  if(!runner())return json(res,409,{error:'Адаптер не прошёл проверку готовности. Задание можно сохранить как черновик.'});
   if(state.jobs.filter(j=>['queued','running'].includes(j.status)).length>=10)return json(res,429,{error:'В очереди уже 10 роликов. Дождись завершения.'});
   if(state.jobs.length>=1000)return json(res,409,{error:'Достигнут лимит истории. Требуется архивирование на сервере.'});
   const free=fs.statfsSync(data);if(free.bavail*free.bsize<2*1024**3)return json(res,507,{error:'На сервере осталось менее 2 ГБ. Освободи место перед запуском.'});

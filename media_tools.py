@@ -18,11 +18,22 @@ class MediaError(Exception):
     """Понятная ошибка локальной проверки вместо технического traceback."""
 
 
+def limit_ffmpeg(arguments):
+    args = [str(v) for v in arguments]
+    value = os.environ.get('SMARTGRAM_FFMPEG_THREADS')
+    if value and Path(args[0]).name == 'ffmpeg' and not any(v in args for v in ['-version','-filters','-encoders']):
+        threads = int(value)
+        if not 1 <= threads <= 2: raise MediaError('SMARTGRAM_FFMPEG_THREADS must be 1 or 2.')
+        args[1:1] = ['-filter_threads', str(threads), '-filter_complex_threads', str(threads)]
+        if '-threads' not in args: args[-1:-1] = ['-threads', str(threads)]
+    return args
+
+
 def run_command(arguments, cwd=None, timeout=180, journal=None):
     """Никакой оболочки или API: только явные аргументы локального процесса."""
     started = time.monotonic()
     try:
-        result = subprocess.run([str(value) for value in arguments], cwd=cwd, timeout=timeout,
+        result = subprocess.run(limit_ffmpeg(arguments), cwd=cwd, timeout=timeout,
                                 capture_output=True, text=True, encoding="utf-8", errors="replace")
     except (OSError, subprocess.TimeoutExpired) as error:
         if journal is not None:

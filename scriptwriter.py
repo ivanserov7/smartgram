@@ -3,6 +3,7 @@
 import hashlib
 import json
 import re
+from pathlib import Path
 
 from pydantic import Field, StrictStr, ValidationError, field_validator
 
@@ -72,6 +73,10 @@ def write_script(research: dict, previous=None, feedback=None, generate=generate
     data = {"topic": research["topic"], "research": research,
             "target_duration_seconds": {"min": settings.target_min_seconds, "max": settings.target_max_seconds},
             "previous": previous, "feedback": feedback}
+    # A web job adds preferences as structured data, never as shell/prompt code.
+    import os
+    if os.environ.get('SMARTGRAM_JOB_BRIEF_FILE'):
+        data['video_request'] = json.loads(Path(os.environ['SMARTGRAM_JOB_BRIEF_FILE']).read_text())
     draft = generate(ScriptDraft, read_script_prompt(settings, "writing"), data)
     value = draft.model_dump() if isinstance(draft, ScriptDraft) else draft
     return validate_script(value)

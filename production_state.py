@@ -5,6 +5,7 @@ import fcntl
 import hashlib
 import io
 import json
+import os
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -53,7 +54,7 @@ def inside(root, relative):
 
 
 def config():
-    value = read(ROOT / "visuals_editing_config.json")
+    value = read(Path(os.environ.get("SMARTGRAM_RUN_CONFIG", ROOT / "visuals_editing_config.json")))
     # Prompt files are authoritative editable copies of the complete specification.
     for stage, step, name in [
         ("visuals", "queries", "visual_queries"),
@@ -76,6 +77,7 @@ def config():
             "visual_sequence.py",
             "shot_materials.py",
             "fast_materials.py",
+            "visual_repair.py",
             "visual_generation.py",
             "commons_requests.py",
             "commons_materials.py",
@@ -88,6 +90,7 @@ def config():
         "editing": [
             "editing.py",
             "editing_inputs.py",
+            "visual_repair.py",
             "visual_sequence.py",
             "video_render.py",
             "video_schedule_check.py",
