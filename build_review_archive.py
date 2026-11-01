@@ -65,7 +65,8 @@ def collect_project_files() -> list[Path]:
             name
             for name in folders
             if name not in EXCLUDED_DIRECTORIES
-            and not name.startswith(".")
+            and (not name.startswith(".") or
+                 (Path(directory) == PROJECT_DIRECTORY and name == ".github"))
             and not SECRET_NAME.search(name)
             and not (Path(directory) / name).is_symlink()
         )

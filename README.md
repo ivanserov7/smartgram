@@ -1,5 +1,11 @@
 # Smartgram
 
+Приватный репозиторий: https://github.com/ivanserov7/smartgram.
+Работа через ChatGPT/Codex, офлайн CI, автоматическая публикация на Timeweb и
+откат описаны в [SERVER_WORKFLOW.md](SERVER_WORKFLOW.md). Серверный проект:
+`/opt/smartgram/dev`; сайт: https://smartgram.pro. Вход в серверный Codex:
+`ssh -t smartgram 'cd /opt/smartgram/dev && codex'`.
+
 ## Визуальные материалы и монтаж — объединённая реализация
 
 Код перенесён из проверенной отдельной копии в основной проект с трёхсторонним
