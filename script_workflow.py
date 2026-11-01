@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 
 from fact_checker import check_script, validate_verification
-from file_io import atomic_write_json
+from file_io import atomic_write_json, exclusive_lock, LockBusyError
 from research import ResearchError
 from research_requests import now_iso
 from script_config import ScriptSettings
@@ -62,6 +62,11 @@ def load_script_state(research, directory, settings, demo):
             for version in state["versions"]:
                 if script_identity(version["script"]) != version["script_version_id"]:
                     raise ValueError
+            if state.get("pending_generation") is not None:
+                raise ResearchError(
+                    "Предыдущая генерация сценария прервана или завершилась ошибкой; "
+                    "исход запроса требует проверки, автоматический повтор отключён."
+                )
             if state["status"] == "technical_error":
                 raise ResearchError("Предыдущий запуск остановлен технической ошибкой; автоматический повтор отключён. " + state["stop_reason"])
         except (ValueError, KeyError, TypeError):
@@ -83,6 +88,8 @@ def apply_duration_feedback(state, directory, settings, duration_feedback):
         raise ResearchError("Нужна измеренная длительность аудио вне целевого диапазона.")
     if not state["versions"] or not state["versions"][-1].get("verification", {}).get("approved"):
         raise ResearchError("Замечание об аудио принимается только для проверенной текущей версии.")
+    if duration_feedback.get("script_version_id") != state["versions"][-1]["script_version_id"]:
+        raise ResearchError("Замечание об аудио относится к другой версии сценария.")
     state["duration_feedback_history"].append(duration_feedback)
     state.update(status="needs_revision", stop_reason=None)
     state["versions"][-1]["duration_feedback"] = duration_feedback
@@ -92,6 +99,16 @@ def apply_duration_feedback(state, directory, settings, duration_feedback):
 
 def run_scriptwriter(research: dict, directory: Path, generate, settings=None, demo=False, duration_feedback=None) -> dict:
     """Возобновление сохраняет общий счётчик; сбой не запускает новые запросы автоматически."""
+    directory = Path(directory)
+    try:
+        with exclusive_lock(directory / ".script.lock", "Сценарист уже работает в этой папке."):
+            return _run_scriptwriter(research, directory, generate, settings, demo, duration_feedback)
+    except LockBusyError as error:
+        raise ResearchError(str(error)) from None
+
+
+def _run_scriptwriter(research, directory, generate, settings, demo, duration_feedback):
+    """Read and mutate state only while the script workflow owns its lock."""
     require_usable_research(research, demo)
     directory.mkdir(parents=True, exist_ok=True)
     state, settings = load_script_state(research, directory, settings or ScriptSettings(), demo)
@@ -114,6 +131,12 @@ def run_scriptwriter(research: dict, directory: Path, generate, settings=None, d
             feedback = None if previous is None else {"issues": previous["verification"]["issues"],
                                                        "duration": previous.get("duration_feedback")}
             print(f"Сценарист: версия {len(state['versions']) + 1}; доработок использовано {state['revisions_used']}/{settings.max_revisions}.", flush=True)
+            state["pending_generation"] = {
+                "version_number": len(state["versions"]) + 1,
+                "previous_script_version_id": previous["script_version_id"] if previous else None,
+                "started_at_utc": now_iso(),
+            }
+            save_script_state(directory, state)
             script = write_script(research, previous=previous["script"] if previous else None, feedback=feedback,
                                   generate=generate, settings=settings, demo=demo)
             if previous:
@@ -121,6 +144,7 @@ def run_scriptwriter(research: dict, directory: Path, generate, settings=None, d
             version = {"number": len(state["versions"]) + 1, "created_at_utc": now_iso(), "script": script,
                        "script_version_id": script_identity(script), "verification": None, "feedback_received": feedback}
             state["versions"].append(version)
+            state.pop("pending_generation", None)
             state.update(status="running", stop_reason=None)
             save_script_state(directory, state)
             atomic_write_json(directory / f"script_{version['number']}.json", {

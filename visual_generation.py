@@ -1,6 +1,7 @@
 """Недостающие объяснения: точные элементы рисует код, иллюстрацию — Image API."""
 
 import base64
+import os
 import time
 import httpx
 from datetime import datetime, timezone
@@ -21,15 +22,19 @@ from production_state import (
     digest,
     sha,
     inside,
+    read,
 )
+from image_files import inspect_image
 from openai_meter import OpenAIMeter
 from billing_api import redact
 
 PROMPT_VERSION = "created-review-v2-associative"
 
 
-def image_estimate(usage):
+def image_estimate(usage, model="gpt-image-2.5-flare"):
     """Standard Flare; это оценка по usage, а не подтверждённое списание."""
+    if model != "gpt-image-2.5-flare" or not usage:
+        return None
     details = usage.get("input_tokens_details") or {}
     cached = details.get("cached_tokens_details") or {}
     text, image = details.get("text_tokens", 0), details.get("image_tokens", 0)
@@ -49,9 +54,12 @@ def image_estimate(usage):
 
 def generate_image(directory, settings, prompt):
     """Ровно один HTTP-вызов. SDK retries=0; недоступная модель не заменяется."""
-    key = dotenv_values(ROOT / ".env", interpolate=False).get("OPENAI_API_KEY")
-    if not key:
-        raise ProductionError("OPENAI_API_KEY отсутствует; генерация не отправлена.")
+    key = os.environ.get(
+        "OPENAI_API_KEY",
+        dotenv_values(ROOT / ".env", interpolate=False).get("OPENAI_API_KEY"),
+    )
+    if not key or not key.strip():
+        raise ProductionServiceError("OPENAI_API_KEY отсутствует; генерация не отправлена.")
     parameters = {
         k: settings[k] for k in ("model", "quality", "n", "size", "output_format")
     }
@@ -83,7 +91,7 @@ def generate_image(directory, settings, prompt):
             http_client=transport,
         ) as client:
             response = client.images.generate(prompt=prompt, **parameters)
-        usage = response.usage.model_dump(mode="json") if response.usage else {}
+        usage = response.usage.model_dump(mode="json") if response.usage else None
         meter.telemetry.update(
             status="completed",
             model=parameters["model"],
@@ -92,10 +100,13 @@ def generate_image(directory, settings, prompt):
             ended_at_utc=datetime.now(timezone.utc).isoformat(),
             provider_request_id=getattr(response, "_request_id", None),
         )
+        estimate = image_estimate(usage, parameters["model"])
         record.update(
             usage=usage,
-            estimate_usd=image_estimate(usage),
-            estimate_status="estimated_not_billed",
+            estimate_usd=estimate,
+            estimate_status=(
+                "estimated_not_billed" if estimate is not None else "unknown"
+            ),
         )
         meter.save()  # Usage сохраняется до декодирования/проверки картинки.
         data = base64.b64decode(response.data[0].b64_json, validate=True)
@@ -104,9 +115,21 @@ def generate_image(directory, settings, prompt):
         details = redact(getattr(error, "body", None) or str(error), (key,))
         meter.processing_failed(error)
         meter.telemetry.update(
-            error={"type": type(error).__name__, "details": details},
+            error={
+                "type": type(error).__name__,
+                "http_status": getattr(error, "status_code", None),
+                "details": details,
+            },
             duration_seconds=time.monotonic() - started,
+            ended_at_utc=datetime.now(timezone.utc).isoformat(),
+            provider_request_id=(
+                getattr(error, "request_id", None)
+                or meter.telemetry.get("provider_request_id")
+            ),
         )
+        for attempt in meter.telemetry["attempts"]:
+            if attempt["ended_at_utc"] is None:
+                attempt["ended_at_utc"] = meter.telemetry["ended_at_utc"]
         meter.save()
         cls = ProductionServiceError if isinstance(error, APIError) else ProductionError
         raise cls(
@@ -145,8 +168,14 @@ def diagram_image(spec, folder):
     if max(levels) >= len(labels):
         raise ProductionError("Циклическая схема требует другого явного макета.")
     width, height = 1600, 2844
-    font_path = "/System/Library/Fonts/Supplemental/Arial.ttf"
-    font = ImageFont.truetype(font_path, 38)
+    font_path = Path(
+        os.environ.get("SUBTITLE_FONT_PATH")
+        or dotenv_values(ROOT / ".env", interpolate=False).get("SUBTITLE_FONT_PATH")
+        or "/System/Library/Fonts/Supplemental/Arial.ttf"
+    )
+    if not font_path.is_file():
+        raise ProductionError("Не найден SUBTITLE_FONT_PATH для локальной схемы.")
+    font = ImageFont.truetype(str(font_path), 38)
     image = Image.new("RGB", (width, height), "#102035")
     draw = ImageDraw.Draw(image)
     svg = [
@@ -250,6 +279,7 @@ def create_material(directory, shot, settings, journal, feedback=None):
         else:
             prompt = spec["prompt"] + ("\nИсправить: " + feedback if feedback else "")
             data, record = generate_image(directory, settings, prompt)
+            inspect_image(data, minimum_width=1, minimum_height=1)
             raw = folder / "generated.jpg"
             atomic_write(raw, data)
             # Оригинал остаётся отдельно; разрешённая обработка записывается в происхождение.
@@ -289,7 +319,9 @@ def create_material(directory, shot, settings, journal, feedback=None):
             "prompt_sha256": record["prompt_sha256"],
             "usage": record.get("usage"),
             "estimate_usd": record.get("estimate_usd"),
-            "estimate_status": "estimated_not_billed",
+            "estimate_status": (
+                "estimated_not_billed" if record.get("estimate_usd") is not None else "unknown"
+            ),
             "raw_path": str(raw.relative_to(directory)),
             "raw_sha256": sha(raw),
             "preparation": preparation,
@@ -334,6 +366,9 @@ def verify_created(source, root):
     proof = inside(root, source["provenance_path"])
     if sha(proof) != source["provenance_sha256"] or source.get("license"):
         raise ProductionError("Повреждено происхождение созданной иллюстрации.")
+    saved = read(proof)
+    if not isinstance(saved, dict) or any(source.get(key) != value for key, value in saved.items()):
+        raise ProductionError("Метаданные иллюстрации не совпадают с сохранённым происхождением.")
     if sha(inside(root, source["raw_path"])) != source["raw_sha256"]:
         raise ProductionError("Изменён исходник генерации.")
     if (

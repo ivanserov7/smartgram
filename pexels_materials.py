@@ -7,6 +7,7 @@ from urllib.parse import urlsplit
 
 import httpx
 from dotenv import dotenv_values
+import os
 
 from file_io import atomic_write_json
 from image_files import inspect_image
@@ -135,7 +136,10 @@ def search(gateway, query):
     metrics = journal.state.setdefault("metrics", {})
     state = journal.state.setdefault("pexels", {})
     key = (
-        dotenv_values(ROOT / ".env", interpolate=False).get("PEXELS_API_KEY") or ""
+        os.environ.get(
+            "PEXELS_API_KEY",
+            dotenv_values(ROOT / ".env", interpolate=False).get("PEXELS_API_KEY"),
+        ) or ""
     ).strip()
     if not key:
         state.update(

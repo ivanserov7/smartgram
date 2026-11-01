@@ -47,6 +47,10 @@ def drain():
     # Bootstrap is safe only while the old panel cannot launch any paid job.
     if 'SMARTGRAM_DRAIN_PROTOCOL_V1' not in (PANEL/'server/app.mjs').read_text():
         if read(CONFIG).get('runner_command') or active_jobs():raise ValueError('Install drain while legacy runner is disabled first.')
+    # Wait for one event-loop acknowledgement after installing the marker. A
+    # tick that checked maintenance just before the write must now have saved
+    # its running job; later ticks cannot start queued work.
+    health()
     deadline=time.monotonic()+3600
     while active_jobs():
         if time.monotonic()>deadline:raise ValueError('Active job still running; publication cancelled without killing it.')

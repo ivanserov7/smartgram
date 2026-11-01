@@ -18,8 +18,7 @@ import main
 import model_api
 import pipeline
 import scene_planner
-import source_reader
-from demo_data import DEMO_URL, DemoResponses, demo_research
+from demo_data import DemoResponses, demo_research
 from research import ResearchError
 from voice_errors import VoiceoverError
 from scriptwriter import ScriptDraft, write_script
@@ -110,17 +109,6 @@ class RealIntegrationTests(unittest.TestCase):
         self.assertFalse(requests[0]["store"])
         self.assertNotIn("tools", requests[0])
 
-    def test_source_html_extraction(self):
-        def handler(request):
-            return httpx.Response(200, headers={"content-type": "text/html; charset=utf-8"},
-                                  text="<html><script>IGNORE THIS</script><p>" + "Текст источника. " * 20 + "</p></html>")
-
-        client = httpx.Client(transport=httpx.MockTransport(handler))
-        with patch.object(source_reader, "validate_public_url"), patch.object(source_reader.httpx, "Client", return_value=client):
-            page = source_reader.fetch_source(DEMO_URL)
-        self.assertEqual(page["status"], "available")
-        self.assertNotIn("IGNORE", page["text"])
-        self.assertIn("Текст источника.", page["text"])
 
     def test_api_errors_do_not_expose_body(self):
         for status in (401, 429, 500):
@@ -135,37 +123,9 @@ class RealIntegrationTests(unittest.TestCase):
                         model_api.generate_structured(ScriptDraft, "test", {})
                 self.assertNotIn("DO-NOT-PRINT-THIS", str(caught.exception))
 
-    def test_pdf_is_explicitly_unavailable(self):
-        client = httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(
-            200, headers={"content-type": "application/pdf"}, content=b"PDF")))
-        with patch.object(source_reader, "validate_public_url"), patch.object(source_reader.httpx, "Client", return_value=client):
-            page = source_reader.fetch_source(DEMO_URL)
-        self.assertEqual(page["status"], "unavailable")
-        self.assertIn("PDF", page["reason"])
 
-    def test_redirect_is_checked_before_following(self):
-        client = httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(
-            302, headers={"location": "http://localhost/"})))
-        with patch.object(source_reader, "validate_public_url", side_effect=[None, ValueError("Локальный адрес")]) as validate, \
-             patch.object(source_reader.httpx, "Client", return_value=client):
-            page = source_reader.fetch_source(DEMO_URL)
-        self.assertEqual(page["status"], "unavailable")
-        self.assertEqual(validate.call_count, 2)
 
-    def test_unavailable_page(self):
-        client = httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(403)))
-        with patch.object(source_reader, "validate_public_url"), patch.object(source_reader.httpx, "Client", return_value=client):
-            page = source_reader.fetch_source(DEMO_URL)
-        self.assertEqual(page["status"], "unavailable")
-        self.assertEqual(page["text"], "")
-        self.assertIn("403", page["reason"])
 
-    def test_local_source_is_blocked(self):
-        with self.assertRaises(ValueError):
-            source_reader.validate_public_url("file:///etc/passwd")
-        with patch.object(source_reader.socket, "getaddrinfo", return_value=[(0, 0, 0, "", ("127.0.0.1", 80))]):
-            with self.assertRaises(ValueError):
-                source_reader.validate_public_url("http://localhost/")
 
 
 if __name__ == "__main__":

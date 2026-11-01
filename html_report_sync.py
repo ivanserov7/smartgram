@@ -13,7 +13,7 @@ from dotenv import dotenv_values
 
 from build_review_archive import SECRET_VALUE
 from billing_api import local_secret_values
-from file_io import atomic_write_json
+from file_io import atomic_write_json, json_lock
 from review_archive_sync import (
     ReviewSyncError, configured_sync_directory, rename_new_file,
     utc_now, validate_sync_directory,
@@ -90,7 +90,19 @@ def publish_report(temporary: Path, directory: Path, label: str) -> tuple[Path, 
 
 
 def sync_html_report(path: Path, directory: Path, secret_values=()) -> dict:
-    """Публикует проверенную копию, затем атомарно дополняет список отчётов."""
+    """Публикует копию и дополняет индекс, сохраняя записи параллельных этапов."""
+    validate_sync_directory(directory)
+    try:
+        with json_lock(directory / INDEX_NAME):
+            return _sync_html_report(path, directory, secret_values)
+    except OSError as error:
+        raise ReviewSyncError(
+            f"Не удалось заблокировать или сохранить индекс отчётов ({type(error).__name__})."
+        ) from None
+
+
+def _sync_html_report(path: Path, directory: Path, secret_values=()) -> dict:
+    """Вызывается только под блокировкой полного read-modify-write индекса."""
     temporary_path = None
     published = None
     try:

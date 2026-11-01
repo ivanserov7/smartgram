@@ -2,6 +2,7 @@
 
 from dataclasses import asdict, dataclass
 from pathlib import Path
+import os
 
 from dotenv import dotenv_values
 
@@ -25,7 +26,10 @@ class ResearchSettings:
 
 
 def load_research_settings() -> tuple[str, ResearchSettings]:
-    values = dotenv_values(Path(__file__).with_name(".env"), interpolate=False)
+    values = {
+        **dotenv_values(Path(__file__).with_name(".env"), interpolate=False),
+        **os.environ,
+    }
     key = (values.get("OPENAI_API_KEY") or "").strip()
     if not key or key == "your_api_key_here":
         raise ResearchError("Добавьте OPENAI_API_KEY в .env.")

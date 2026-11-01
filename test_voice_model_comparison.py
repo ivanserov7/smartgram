@@ -293,7 +293,7 @@ class VoiceComparisonTests(unittest.TestCase):
         (project / ".env").write_text("OPENAI_API_KEY=test-not-a-real-key\n")
         with patch("voice_model_comparison.PROJECT", project), patch(
             "voice_model_comparison.ComparisonAPI", return_value=self.api
-        ):
+        ), patch.dict("os.environ", {"OPENAI_API_KEY": "test-not-a-real-key"}):
             with patch("sys.argv", ["voice_model_comparison.py"]):
                 self.assertEqual(main(), 0)
                 self.assertEqual(main(), 0)

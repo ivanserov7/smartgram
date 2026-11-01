@@ -39,7 +39,8 @@ def digest(value):
 
 
 def sha(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    with Path(path).open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
 def read(path):
@@ -151,7 +152,7 @@ class Journal:
                 return previous["result"]
             raise (
                 ProductionServiceError
-                if previous.get("service_error")
+                if previous.get("service_error") or previous["status"] == "started"
                 else ProductionError
             )(
                 f'{step}: previous attempt {previous["status"]}; automatic repetition disabled. {previous.get("reason", "Interrupted operation; cost unknown.")}'
@@ -210,7 +211,7 @@ class ModelClient:
 
     def __call__(self, step, settings, schema, data, images=()):
         values = dotenv_values(ROOT / ".env", interpolate=False)
-        api_key = values.get("OPENAI_API_KEY")
+        api_key = os.environ.get("OPENAI_API_KEY", values.get("OPENAI_API_KEY"))
         if not api_key:
             raise ProductionError("OPENAI_API_KEY missing; no request sent.")
         content = [

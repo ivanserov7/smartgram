@@ -13,6 +13,7 @@ from voice_api import VoiceAPI
 from voice_errors import VoiceoverError
 from voice_settings import load_voiceover_settings
 from voiceover import VoiceoverRun
+from voice_lock import voice_lock
 
 
 def audit_audio(source):
@@ -59,6 +60,11 @@ def timing_result(raw, duration, tolerance):
 
 def diagnose(source, destination, model, keys, settings, api=None):
     """Новая диагностическая квитанция отдельно от старого кеша. Сбой не повторяется."""
+    with voice_lock(destination):
+        return _diagnose_locked(source, destination, model, keys, settings, api)
+
+
+def _diagnose_locked(source, destination, model, keys, settings, api=None):
     source, destination = Path(source), Path(destination)
     destination.mkdir(parents=True, exist_ok=True)
     path, audit = audit_audio(source)
@@ -97,6 +103,11 @@ def diagnose(source, destination, model, keys, settings, api=None):
 
 def review_saved(destination, keys, settings, api=None):
     """Только текст/привязка: даже при ошибке чтения нет вызовов TTS или сценариста."""
+    with voice_lock(destination):
+        return _review_saved_locked(destination, keys, settings, api)
+
+
+def _review_saved_locked(destination, keys, settings, api=None):
     destination = Path(destination)
     result = json.loads((destination / "diagnostic.json").read_text())
     settings = replace(settings, asr_model=result["model"], asr_language="ru")

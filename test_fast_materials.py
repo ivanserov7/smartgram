@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import httpx
-from PIL import Image
+from PIL import Image, ImageFont
 
 from fast_materials import FastMaterials, reserve, candidate_id, compact_candidate
 from commons_materials import parse_pages
@@ -371,11 +371,16 @@ class FastTests(unittest.TestCase):
     def test_generated_cache_and_failed_api_no_replay(self):
         shot = dict(draft("Изменение окраски", "explanatory_required"), shot_id="s")
         journal = Journal(self.root, "generation_test", {})
-        result = create_material(self.root, shot, self.settings["generation"], journal)
-        self.assertEqual(
-            create_material(self.root, shot, self.settings["generation"], journal),
-            result,
-        )
+        # This checks cache/provenance, not production typography. Use Pillow's
+        # bundled test font so the regression does not require a macOS path.
+        font_path = self.root / "test-font.ttf"
+        font_path.write_bytes(ImageFont.load_default(size=38).font_bytes)
+        with patch.dict("os.environ", {"SUBTITLE_FONT_PATH": str(font_path)}):
+            result = create_material(self.root, shot, self.settings["generation"], journal)
+            self.assertEqual(
+                create_material(self.root, shot, self.settings["generation"], journal),
+                result,
+            )
         self.assertIsNone(result["license"])
         self.assertEqual(result["origin"], "deterministic")
         self.assertEqual(len(journal.state["operations"]), 1)

@@ -10,9 +10,15 @@ from voice_errors import AudioContractError, AudioAlignmentError, AudioTechnical
 from voice_audio_checks import current_audio_checks
 from voice_settings import load_voiceover_settings
 from voiceover import VoiceoverRun, audio_result
+from voice_lock import voice_lock
 
 
 def recheck_saved(directory, new_round=False, *, api=None, keys=None, settings=None):
+    with voice_lock(directory):
+        return _recheck_saved_locked(directory, new_round, api=api, keys=keys, settings=settings)
+
+
+def _recheck_saved_locked(directory, new_round=False, *, api=None, keys=None, settings=None):
     directory = Path(directory)
     if settings is None or keys is None:
         keys, settings = load_voiceover_settings(require_keys=False)
@@ -23,12 +29,12 @@ def recheck_saved(directory, new_round=False, *, api=None, keys=None, settings=N
             "Текущий сценарий и сохранённый WAV относятся к разным версиям. Новый TTS не запускался."
         )
     if not new_round and manifest.get('local_reassessment'):
-        from voice_local_recheck import reuse_local,reassess_saved
+        from voice_local_recheck import reuse_local, _reassess_saved_locked
         try:
             cached=reuse_local(directory,settings)
             if cached is not None:return cached
         except VoiceoverError:
-            reassess_saved(directory,settings)
+            _reassess_saved_locked(directory,settings)
             raise
     run = VoiceoverRun(directory, settings, keys, api=api)
     run.manifest = manifest

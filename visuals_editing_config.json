@@ -179,7 +179,7 @@
       "model": "gpt-image-2.5-flare",
       "quality": "medium",
       "n": 1,
-      "size": "1024x1024",
+      "size": "1024x1536",
       "output_format": "jpeg",
       "timeout_seconds": 180,
       "max_attempts_per_shot": 2,
