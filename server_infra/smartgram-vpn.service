@@ -10,6 +10,7 @@ Type=simple
 DynamicUser=yes
 LoadCredential=client.json:/etc/smartgram-vpn/client.json
 ExecStart=/usr/local/libexec/smartgram-xray run -config %d/client.json
+ExecStartPost=/usr/bin/timeout 10 /bin/bash -c 'until (: </dev/tcp/127.0.0.1/17890) 2>/dev/null; do sleep 0.1; done'
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=yes
