@@ -364,7 +364,9 @@ class ShotMaterials(VisualMaterials):
     def prepare_and_review(self, job, rd, shot, candidate, composition):
         cid = candidate["candidate_id"]
         sid = shot["shot_id"]
-        if self.source_in_use(candidate,sid):return None
+        from visual_repair import candidate_allowed
+        if not candidate_allowed(self,job,sid,candidate):
+            self.record_rejection(job,shot,candidate,'Исходник уже занят или отклонён в текущем ремонте.');return None
         original = inside(self.directory, candidate["original_path"])
         state = rd.setdefault("framing", {}).setdefault(
             sid + ":" + cid,
@@ -394,7 +396,9 @@ class ShotMaterials(VisualMaterials):
                 self.journal.save()
             n = state["attempt"]
             composition = state["composition"]
-            folder = self.directory / "visual_materials" / sid / cid / str(n)
+            folder = self.directory / "visual_materials" / sid / cid
+            if job.get('repair_id'):folder=folder/job['repair_id']
+            folder=folder/str(n)
             motion = None
             try:
                 motion = prepare(

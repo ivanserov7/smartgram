@@ -198,11 +198,7 @@ def journal_source_in_use(directory, state, candidate, owner):
             )
         ):
             continue
-        if job.get("pending_repair", {}).get("status") in {
-            "pending",
-            "in_progress",
-            "replacement_required",
-        }:
+        if job.get("superseded"):
             continue
         entries = list(job.get("approved", {}).values())
         if job.get("status") == "approved" and job.get("result"):

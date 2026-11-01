@@ -744,19 +744,42 @@ class EditingRun:
                     quality_report="quality_report.json",
                 )
                 atomic_write_json(path, manifest)
+                print(
+                    f"Готовый MP4: {root / ('test_video.mp4' if allow_test else 'video.mp4')}",
+                    flush=True,
+                )
                 return path
             atomic_write_json(root / "quality_report.json", quality)
             if any(b["decision"] == "uncertain" for b in batches):
                 raise ProductionError("Final visual review uncertain; no release.")
-            if (
-                budget["final_corrections"]
-                >= self.settings["final_check"]["max_correction_rounds"]
+            if sha(candidate) != quality["candidate_sha256"] or any(
+                sha(inside(root, n)) != v for n, v in hashes.items()
             ):
-                raise ProductionError("Final correction budget exhausted; no release.")
+                raise ProductionError(
+                    "Inputs/candidate changed during final review; visual repair not sent."
+                )
             issues = [issue for batch in batches for issue in batch["issues"]]
             targets = {issue["target_step"] for issue in issues}
-            budget["final_corrections"] += 1
-            self.journal.save()
+            from visual_repair import normalized_issues
+
+            correction_id = digest(
+                {
+                    "candidate_sha256": sha(candidate),
+                    "issues": normalized_issues(issues),
+                }
+            )
+            reserved = budget.setdefault("final_correction_ids", [])
+            if correction_id not in reserved:
+                if (
+                    budget["final_corrections"]
+                    >= self.settings["final_check"]["max_correction_rounds"]
+                ):
+                    raise ProductionError(
+                        f"Лимит финальных исправлений: {budget['final_corrections']}/{self.settings['final_check']['max_correction_rounds']}; видео не выпущено."
+                    )
+                budget["final_corrections"] += 1
+                reserved.append(correction_id)
+                self.journal.save()  # Резерв и ID записаны вместе: resume не расходует второй раунд.
             job["failed_step"] = ",".join(sorted(targets))
             # Route source/transition fixes back explicitly. Never silently change an approved crop.
             if targets & {"video_render", "visual_materials"}:
@@ -767,6 +790,8 @@ class EditingRun:
                         "issues": issues,
                         "correction_round": budget["final_corrections"],
                         "source_audio_preserved": True,
+                        "candidate_sha256": sha(candidate),
+                        "correction_id": correction_id,
                     },
                 )
                 # A rendering/composition issue returns to the existing visual workflow;
@@ -849,6 +874,27 @@ class EditingRun:
                 if not (self.directory / "visual_materials.json").exists():
                     raise UpstreamBlocked("Approved visual_materials.json missing.")
                 visuals = read(self.directory / "visual_materials.json")
+            # При остановке ремонта сначала продолжаем его журнал; старый approved не возвращается.
+            state_path = self.directory / "visual_materials_state.json"
+            if (
+                visuals.get("settings_snapshot", {}).get("workflow_version") == 3
+                and state_path.exists()
+            ):
+                pending = any(
+                    p.get("status") != "completed"
+                    or p.get("result_sha256")
+                    != digest(visuals["fragments"][j["fragment_index"] - 1])
+                    for j in read(state_path)["jobs"].values()
+                    if (p := j.get("pending_repair"))
+                    and p.get("script_version_id") == script["script_version_id"]
+                )
+                if pending:
+                    from fast_materials import FastMaterials
+
+                    request = read(self.directory / "correction_request.json")
+                    visuals = FastMaterials(
+                        self.directory, visuals["settings_snapshot"], self.model
+                    ).repair_approved(script, visuals, set(), request["issues"])
             return self.execute(script, audio, visuals, allow_test)
         except (ProductionError, MediaError) as error:
             old = (
@@ -896,4 +942,7 @@ class EditingRun:
 def run_editing(directory, settings=None, model=None):
     directory = Path(directory)
     with run_lock(directory):
-        return EditingRun(directory, settings, model).run()
+        from progress import stage_progress
+
+        with stage_progress("Монтаж и финальная проверка"):
+            return EditingRun(directory, settings, model).run()

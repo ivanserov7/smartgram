@@ -17,6 +17,7 @@ from visual_materials import run_visual_materials
 from editing import run_editing
 from production_state import ProductionError
 from media_tools import MediaError
+from progress import run_with_progress
 from script_config import ScriptSettings, load_script_settings
 from script_requests import ScriptClient
 from script_workflow import run_scriptwriter, approved_script
@@ -141,8 +142,8 @@ def run_independent_branches(directory, state):
     update_run(directory,state,stage='voiceover_and_visuals',branches=copy.deepcopy(branches))
     errors={};results={}
     with ThreadPoolExecutor(max_workers=2,thread_name_prefix='smartgram') as pool:
-        futures={pool.submit(voiceover_from_file,directory/'script.json',expected_script_version_id=version):'voiceover',
-            pool.submit(run_visual_materials,directory,script_snapshot=snapshot):'visuals'}
+        futures={pool.submit(run_with_progress,'Озвучка и проверка речи',voiceover_from_file,directory/'script.json',expected_script_version_id=version):'voiceover',
+            pool.submit(run_with_progress,'Подбор и проверка видеоряда',run_visual_materials,directory,script_snapshot=snapshot):'visuals'}
         for future in as_completed(futures):
             name=futures[future]
             try:
@@ -195,7 +196,7 @@ def run_pipeline(topic=None, research_file=None, demo=False, demo_case="success"
         research = demo_research(topic, demo_case)
     else:
         print("Исследование темы через OpenAI и веб-поиск…")
-        research = research_topic(topic, output_root=output_root) if output_root else research_topic(topic)
+        research = run_with_progress('Исследование',research_topic,topic,output_root=output_root) if output_root else run_with_progress('Исследование',research_topic,topic)
     validate_research(research, demo=demo)
     mode = "demo" if demo else "real"
     research = {**research, "mode": mode}
@@ -234,7 +235,7 @@ def run_pipeline(topic=None, research_file=None, demo=False, demo_case="success"
             raise ResearchError("Старое исследование не содержит проверенных снимков и цитат. Выполните новое исследование --stop-after research.")
         for warning in script_research.get("warnings", []):
             print(f"Предупреждение исследования: {warning}")
-        script, report = write_and_check(script_research, directory, state, generate, demo)
+        script, report = run_with_progress('Сценарий и проверка',write_and_check,script_research, directory, state, generate, demo)
         save_artifact(directory, "scenes", scenes_from_script(script, demo=demo), mode)
         if stop_after == "script":
             update_run(directory, state, status="script_completed", stage="verification")

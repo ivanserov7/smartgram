@@ -69,7 +69,7 @@ def health():
 
 def check():
     clean();rev=git('rev-parse','HEAD').decode().strip()
-    run(['runuser','-u','smartgram-dev','--',ENV/'bin/python',DEV/'server_infra/check.py'],cwd=DEV)
+    run(['runuser','-u','smartgram-dev','--',DEV/'.venv/bin/python',DEV/'server_infra/check.py'],cwd=DEV)
     run(['runuser','-u','smartgram-dev','--','/opt/smartgram-panel/node/bin/node','--test',DEV/'server_infra/test_panel.mjs'],cwd=DEV)
     clean();assert rev==git('rev-parse','HEAD').decode().strip()
     atomic(STATE/'checks'/f'{rev}.json',{'revision':rev,'passed':True})
@@ -78,7 +78,9 @@ def check():
 
 def prepare(rev):
     release=Path('/opt/smartgram/releases')/rev
-    if release.exists():return release
+    if release.exists():
+        if not (release/'.release-ready.json').exists():raise ValueError('Incomplete prepared release; keep it for diagnosis and prepare a new reviewed commit.')
+        return release
     archive=git('archive','--format=tar',rev);release.mkdir(mode=0o755)
     with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
         for member in tar.getmembers():
@@ -90,6 +92,7 @@ def prepare(rev):
     (release/'.env').symlink_to('/etc/smartgram/production.env')
     (release/'.venv').symlink_to(ENV)
     (release/'outputs').symlink_to('/var/lib/smartgram/outputs')
+    atomic(release/'.release-ready.json',{'revision':rev,'requirements_sha256':(ENV/'requirements.sha256').read_text().strip()})
     return release
 
 

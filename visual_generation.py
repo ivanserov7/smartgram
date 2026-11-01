@@ -223,6 +223,7 @@ def creation_identity(shot, settings, feedback=None):
         "settings": settings,
         "review_version": PROMPT_VERSION,
         "feedback": feedback,
+        **({"repair_id": shot["repair_id"], "task_version": shot.get("task_version")} if shot.get("repair_id") else {}),
     }
 
 

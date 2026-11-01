@@ -204,23 +204,19 @@ class FastTests(unittest.TestCase):
         self.assertEqual((len(self.requests), len(self.calls)), before)
         self.assertEqual(result["status"], "needs_visual")
 
-    def test_early_stop_one_finalist_reused_for_two_shots(self):
+    def test_same_source_is_not_reused_for_another_shot(self):
         self.suitable = True
         with patch("fast_materials.create_commons_client", return_value=self.client):
             runner = self.runner()
             result = read(runner.run(self.script))
         job = next(iter(runner.journal.state["jobs"].values()))
-        self.assertEqual(result["status"], "approved")
-        self.assertEqual(len(job["budget"]["finalists"]), 1)
-        self.assertEqual(len(job["rounds"]), 1)
-        originals = [
-            r
-            for r in self.requests
-            if r.url.host == "upload.wikimedia.org" and "3072px" in str(r.url)
-        ]
-        self.assertEqual(len(originals), 1)
-        for shot in result["fragments"][0]["shots"]:
-            verify_asset(shot, self.root)
+        self.assertEqual(result['status'],'needs_visual')
+        # MockTransport отдаёт одинаковые байты для всех ID: годится лишь один исходник.
+        accepted=[shot for shot in result['fragments'][0]['shots'] if shot['status']=='approved']
+        self.assertEqual(len(accepted),1)
+        self.assertLessEqual(len(job['budget']['finalists']),3)
+        self.assertLessEqual(len(job['rounds']),2)
+        for shot in accepted:verify_asset(shot,self.root)
 
     def test_rank_pagination_and_query_order(self):
         runner = self.runner()
@@ -394,19 +390,19 @@ class FastTests(unittest.TestCase):
                 create_material(self.root, shot, self.settings["generation"], journal)
             self.assertEqual(api.call_count, 1)
 
-    def test_generation_cannot_spend_after_finalist_limit(self):
+    def test_generation_cannot_spend_after_its_own_attempt_limit(self):
         runner = self.runner()
         runner.limits = self.settings["search"]
         shot = dict(draft("Текст", "explanatory_required"), shot_id="s")
         job = {
             "shots": [shot],
             "approved": {},
-            "budget": {"finalists": ["a", "b", "c"]},
+            "budget": {"finalists": ["a", "b", "c"], "generated:s":["first","second"]},
         }
         with patch("fast_materials.create_material") as generate:
             runner.create_missing(job, {})
         generate.assert_not_called()
-        self.assertIn("лимит", job["unresolved"]["s"])
+        self.assertIn("Лимит", job["unresolved"]["s"])
 
     def test_copy_dependencies_creates_missing_target_and_preserves_source(self):
         runner = self.runner()
@@ -690,7 +686,7 @@ class FastTests(unittest.TestCase):
         ) as api:
             runner.create_missing(job, {})
             self.assertEqual(api.call_count, 2)
-            self.assertEqual(len(job["budget"]["finalists"]), 2)
+            self.assertEqual(len(job["budget"]["generated:s"]), 2)
             runner.create_missing(job, {})
             self.assertEqual(api.call_count, 2)
         self.assertEqual(job["approved"]["s"]["selection_mode"], "created")
