@@ -1,0 +1,2264 @@
+{
+  "source": "Saved real Gemini migration, three approved tracks; no synthetic ASR",
+  "entries": [
+    {
+      "source_directory": "outputs/gemini_migration_20261101/topic_1",
+      "script": {
+        "schema_version": 2,
+        "mode": "real",
+        "fragments": [
+          {
+            "text": "Как осьминог меняет цвет? Под его кожей расположены хроматофоры — крошечные органы с эластичными мешочками пигмента. Когда мешочек растягивается, цвет становится заметнее; когда окружающие мышцы расслабляются, мешочек втягивается.",
+            "visual": "Фотография осьминога целиком; затем простая схема слоёв кожи с выделенным хроматофором и его пигментным мешочком."
+          },
+          {
+            "text": "Работой этих мышц управляет нервная система: мозговые центры выбирают рисунок, а нервные клетки включают или выключают группы хроматофоров. Поэтому узор на коже может меняться почти мгновенно.",
+            "visual": "Схема нервной системы, управляющей группами хроматофоров; рядом — последовательность изображений кожи осьминога с разными узорами."
+          },
+          {
+            "text": "Смена окраски помогает осьминогу маскироваться и может служить сигналом. У некоторых головоногих есть и отражающие структуры, которые тоже участвуют в создании цвета.",
+            "visual": "Фотография осьминога с заметным рисунком на коже; отдельная простая иллюстрация отражающих структур у некоторых головоногих, без утверждения, что они есть у всех осьминогов."
+          }
+        ],
+        "narration_text": "Как осьминог меняет цвет? Под его кожей расположены хроматофоры — крошечные органы с эластичными мешочками пигмента. Когда мешочек растягивается, цвет становится заметнее; когда окружающие мышцы расслабляются, мешочек втягивается. Работой этих мышц управляет нервная система: мозговые центры выбирают рисунок, а нервные клетки включают или выключают группы хроматофоров. Поэтому узор на коже может меняться почти мгновенно. Смена окраски помогает осьминогу маскироваться и может служить сигналом. У некоторых головоногих есть и отражающие структуры, которые тоже участвуют в создании цвета.",
+        "script_version_id": "915edd52ed2bacd97b45454a5da6653894b5abb3d046a548d63864d3a7bab12a"
+      },
+      "audio": {
+        "mode": "real",
+        "status": "completed",
+        "script_version_id": "915edd52ed2bacd97b45454a5da6653894b5abb3d046a548d63864d3a7bab12a",
+        "audio_sha256": "92456790bfacd9f8d6bab3bb1a3bc0ced4f0635701a3d6c38e5593ab6de7f905",
+        "duration_seconds": 42.04,
+        "total_duration_seconds": 42.04,
+        "audio_kind": "ai_generated_speech",
+        "timing_status": "aligned_to_deepgram_words",
+        "text_verified": true,
+        "openai_transcript": {
+          "text": "Как осьминог меняет цвет? Под его кожей расположены хроматофоры — крошечные органы с эластичными мешочками пигмента. Когда мешочек растягивается, цвет становится заметней. Когда окружающие мышцы расслабляются, мешочек втягивается. Работой этих мышц управляет нервная система. Мозговые центры выбирают рисунок, а нервные клетки включают или выключают группы хроматофоров. Поэтому узор на коже может меняться почти мгновенно. Смена окраски помогает осьминогу маскироваться и может служить сигналом. У некоторых головоногих есть и отражающие структуры, которые тоже участвуют в создании цвета.",
+          "languages": [
+            {
+              "code": "ru"
+            }
+          ],
+          "usage": {
+            "type": "duration",
+            "seconds": 43
+          }
+        },
+        "transcript": "Как осьминог меняет цвет? Под его кожей расположены хроматофоры крошечные органы с эластичными мешочками пигмента. Когда мешочек растягивается, цвет становится заметней. Когда окружающие мышцы расслабляются, мешочек втягивается. Работой этих мышц управляет нервная система. Мозговые центры выбирают рисунок, а нервные клетки включают или выключают группы хроматофоров. Поэтому узор на коже может меняться почти мгновенно. Смена окраски помогает осьминогу маскироваться и может служить сигналом. У некоторых головоногих есть и отражающие структуры, которые тоже участвуют в создании цвета.",
+        "text_confirmation": {
+          "policy_version": "openai-primary-v1",
+          "approved": true,
+          "basis": "saved_gpt_openai_semantic_confirmation",
+          "normalized_full_match": false,
+          "original_gpt_decision": "Можно использовать",
+          "timing_source": "deepgram_words",
+          "deepgram_text_can_veto": false
+        },
+        "review": {
+          "decision": "Можно использовать",
+          "issues": [],
+          "fragments": [
+            {
+              "fragment_index": 1,
+              "first_word_id": 1,
+              "last_word_id": 27
+            },
+            {
+              "fragment_index": 2,
+              "first_word_id": 28,
+              "last_word_id": 53
+            },
+            {
+              "fragment_index": 3,
+              "first_word_id": 54,
+              "last_word_id": 75
+            }
+          ],
+          "verification_version": 2,
+          "assessments": [
+            {
+              "fragment_index": 1,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": true,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (saved_gpt_openai_semantic_confirmation). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            },
+            {
+              "fragment_index": 2,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": true,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (saved_gpt_openai_semantic_confirmation). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            },
+            {
+              "fragment_index": 3,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": true,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (saved_gpt_openai_semantic_confirmation). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            }
+          ]
+        },
+        "words": [
+          {
+            "word": "как",
+            "start": 0.32,
+            "end": 0.48,
+            "confidence": 0.99316406,
+            "punctuated_word": "Как",
+            "word_id": 1
+          },
+          {
+            "word": "осьминог",
+            "start": 0.48,
+            "end": 0.98,
+            "confidence": 1.0,
+            "punctuated_word": "осьминог",
+            "word_id": 2
+          },
+          {
+            "word": "меняет",
+            "start": 1.1999999,
+            "end": 1.68,
+            "confidence": 0.9863281,
+            "punctuated_word": "меняет",
+            "word_id": 3
+          },
+          {
+            "word": "цвет",
+            "start": 1.68,
+            "end": 2.1799998,
+            "confidence": 0.79125977,
+            "punctuated_word": "цвет?",
+            "word_id": 4
+          },
+          {
+            "word": "под",
+            "start": 2.8,
+            "end": 3.04,
+            "confidence": 0.99609375,
+            "punctuated_word": "Под",
+            "word_id": 5
+          },
+          {
+            "word": "его",
+            "start": 3.04,
+            "end": 3.12,
+            "confidence": 0.99902344,
+            "punctuated_word": "его",
+            "word_id": 6
+          },
+          {
+            "word": "кожей",
+            "start": 3.12,
+            "end": 3.6,
+            "confidence": 0.9951172,
+            "punctuated_word": "кожей",
+            "word_id": 7
+          },
+          {
+            "word": "расположены",
+            "start": 3.6,
+            "end": 4.1,
+            "confidence": 0.9951172,
+            "punctuated_word": "расположены",
+            "word_id": 8
+          },
+          {
+            "word": "хроматофоры",
+            "start": 4.4,
+            "end": 4.9,
+            "confidence": 0.92297363,
+            "punctuated_word": "хроматофоры",
+            "word_id": 9
+          },
+          {
+            "word": "крошечные",
+            "start": 5.68,
+            "end": 6.18,
+            "confidence": 0.9880371,
+            "punctuated_word": "крошечные",
+            "word_id": 10
+          },
+          {
+            "word": "органы",
+            "start": 6.24,
+            "end": 6.56,
+            "confidence": 1.0,
+            "punctuated_word": "органы",
+            "word_id": 11
+          },
+          {
+            "word": "с",
+            "start": 6.56,
+            "end": 6.8799996,
+            "confidence": 0.9941406,
+            "punctuated_word": "с",
+            "word_id": 12
+          },
+          {
+            "word": "эластичными",
+            "start": 6.8799996,
+            "end": 7.3799996,
+            "confidence": 0.99934894,
+            "punctuated_word": "эластичными",
+            "word_id": 13
+          },
+          {
+            "word": "мешочками",
+            "start": 7.52,
+            "end": 8.02,
+            "confidence": 1.0,
+            "punctuated_word": "мешочками",
+            "word_id": 14
+          },
+          {
+            "word": "пигмента",
+            "start": 8.16,
+            "end": 8.66,
+            "confidence": 0.9954427,
+            "punctuated_word": "пигмента.",
+            "word_id": 15
+          },
+          {
+            "word": "когда",
+            "start": 9.2,
+            "end": 9.36,
+            "confidence": 0.9980469,
+            "punctuated_word": "Когда",
+            "word_id": 16
+          },
+          {
+            "word": "мешочек",
+            "start": 9.36,
+            "end": 9.86,
+            "confidence": 0.99934894,
+            "punctuated_word": "мешочек",
+            "word_id": 17
+          },
+          {
+            "word": "растягивается",
+            "start": 10.08,
+            "end": 10.58,
+            "confidence": 0.91430664,
+            "punctuated_word": "растягивается,",
+            "word_id": 18
+          },
+          {
+            "word": "цвет",
+            "start": 11.04,
+            "end": 11.44,
+            "confidence": 0.9980469,
+            "punctuated_word": "цвет",
+            "word_id": 19
+          },
+          {
+            "word": "становится",
+            "start": 11.44,
+            "end": 11.84,
+            "confidence": 0.99609375,
+            "punctuated_word": "становится",
+            "word_id": 20
+          },
+          {
+            "word": "заметней",
+            "start": 11.84,
+            "end": 12.34,
+            "confidence": 0.8925781,
+            "punctuated_word": "заметней.",
+            "word_id": 21
+          },
+          {
+            "word": "когда",
+            "start": 12.974999,
+            "end": 13.054999,
+            "confidence": 0.9980469,
+            "punctuated_word": "Когда",
+            "word_id": 22
+          },
+          {
+            "word": "окружающие",
+            "start": 13.054999,
+            "end": 13.134999,
+            "confidence": 0.99902344,
+            "punctuated_word": "окружающие",
+            "word_id": 23
+          },
+          {
+            "word": "мышцы",
+            "start": 13.134999,
+            "end": 13.634999,
+            "confidence": 0.99902344,
+            "punctuated_word": "мышцы",
+            "word_id": 24
+          },
+          {
+            "word": "расслабляются",
+            "start": 14.334999,
+            "end": 14.834999,
+            "confidence": 0.9875488,
+            "punctuated_word": "расслабляются,",
+            "word_id": 25
+          },
+          {
+            "word": "мешочек",
+            "start": 15.295,
+            "end": 15.795,
+            "confidence": 0.9996745,
+            "punctuated_word": "мешочек",
+            "word_id": 26
+          },
+          {
+            "word": "втягивается",
+            "start": 15.934999,
+            "end": 16.435,
+            "confidence": 0.99902344,
+            "punctuated_word": "втягивается.",
+            "word_id": 27
+          },
+          {
+            "word": "работой",
+            "start": 17.455,
+            "end": 17.955,
+            "confidence": 0.9951172,
+            "punctuated_word": "Работой",
+            "word_id": 28
+          },
+          {
+            "word": "этих",
+            "start": 18.015,
+            "end": 18.335,
+            "confidence": 1.0,
+            "punctuated_word": "этих",
+            "word_id": 29
+          },
+          {
+            "word": "мышц",
+            "start": 18.335,
+            "end": 18.654999,
+            "confidence": 0.9980469,
+            "punctuated_word": "мышц",
+            "word_id": 30
+          },
+          {
+            "word": "управляет",
+            "start": 18.654999,
+            "end": 19.154999,
+            "confidence": 0.99902344,
+            "punctuated_word": "управляет",
+            "word_id": 31
+          },
+          {
+            "word": "нервная",
+            "start": 19.215,
+            "end": 19.715,
+            "confidence": 1.0,
+            "punctuated_word": "нервная",
+            "word_id": 32
+          },
+          {
+            "word": "система",
+            "start": 20.255,
+            "end": 20.414999,
+            "confidence": 0.7297363,
+            "punctuated_word": "система.",
+            "word_id": 33
+          },
+          {
+            "word": "мозговые",
+            "start": 20.414999,
+            "end": 20.895,
+            "confidence": 0.9975586,
+            "punctuated_word": "Мозговые",
+            "word_id": 34
+          },
+          {
+            "word": "центры",
+            "start": 20.895,
+            "end": 21.375,
+            "confidence": 0.9995117,
+            "punctuated_word": "центры",
+            "word_id": 35
+          },
+          {
+            "word": "выбирают",
+            "start": 21.375,
+            "end": 21.855,
+            "confidence": 1.0,
+            "punctuated_word": "выбирают",
+            "word_id": 36
+          },
+          {
+            "word": "рисунок",
+            "start": 21.855,
+            "end": 22.355,
+            "confidence": 0.9970703,
+            "punctuated_word": "рисунок,",
+            "word_id": 37
+          },
+          {
+            "word": "а",
+            "start": 22.494999,
+            "end": 22.735,
+            "confidence": 0.99853516,
+            "punctuated_word": "а",
+            "word_id": 38
+          },
+          {
+            "word": "нервные",
+            "start": 22.735,
+            "end": 23.134998,
+            "confidence": 0.9995117,
+            "punctuated_word": "нервные",
+            "word_id": 39
+          },
+          {
+            "word": "клетки",
+            "start": 23.134998,
+            "end": 23.634998,
+            "confidence": 1.0,
+            "punctuated_word": "клетки",
+            "word_id": 40
+          },
+          {
+            "word": "включают",
+            "start": 23.695,
+            "end": 24.195,
+            "confidence": 0.9980469,
+            "punctuated_word": "включают",
+            "word_id": 41
+          },
+          {
+            "word": "или",
+            "start": 24.414999,
+            "end": 24.654999,
+            "confidence": 0.9980469,
+            "punctuated_word": "или",
+            "word_id": 42
+          },
+          {
+            "word": "выключают",
+            "start": 24.654999,
+            "end": 25.154999,
+            "confidence": 0.9995117,
+            "punctuated_word": "выключают",
+            "word_id": 43
+          },
+          {
+            "word": "группы",
+            "start": 25.375,
+            "end": 25.695,
+            "confidence": 0.9941406,
+            "punctuated_word": "группы",
+            "word_id": 44
+          },
+          {
+            "word": "хроматофоров",
+            "start": 25.695,
+            "end": 26.195,
+            "confidence": 0.9379883,
+            "punctuated_word": "хроматофоров.",
+            "word_id": 45
+          },
+          {
+            "word": "поэтому",
+            "start": 26.9,
+            "end": 27.38,
+            "confidence": 0.9892578,
+            "punctuated_word": "Поэтому",
+            "word_id": 46
+          },
+          {
+            "word": "узор",
+            "start": 27.38,
+            "end": 27.78,
+            "confidence": 1.0,
+            "punctuated_word": "узор",
+            "word_id": 47
+          },
+          {
+            "word": "на",
+            "start": 27.78,
+            "end": 27.94,
+            "confidence": 0.99902344,
+            "punctuated_word": "на",
+            "word_id": 48
+          },
+          {
+            "word": "коже",
+            "start": 27.94,
+            "end": 28.34,
+            "confidence": 1.0,
+            "punctuated_word": "коже",
+            "word_id": 49
+          },
+          {
+            "word": "может",
+            "start": 28.34,
+            "end": 28.74,
+            "confidence": 1.0,
+            "punctuated_word": "может",
+            "word_id": 50
+          },
+          {
+            "word": "меняться",
+            "start": 28.74,
+            "end": 29.220001,
+            "confidence": 0.99902344,
+            "punctuated_word": "меняться",
+            "word_id": 51
+          },
+          {
+            "word": "почти",
+            "start": 29.220001,
+            "end": 29.7,
+            "confidence": 1.0,
+            "punctuated_word": "почти",
+            "word_id": 52
+          },
+          {
+            "word": "мгновенно",
+            "start": 29.7,
+            "end": 30.2,
+            "confidence": 0.99316406,
+            "punctuated_word": "мгновенно.",
+            "word_id": 53
+          },
+          {
+            "word": "смена",
+            "start": 30.98,
+            "end": 31.38,
+            "confidence": 0.9970703,
+            "punctuated_word": "Смена",
+            "word_id": 54
+          },
+          {
+            "word": "окраски",
+            "start": 31.38,
+            "end": 31.86,
+            "confidence": 0.99902344,
+            "punctuated_word": "окраски",
+            "word_id": 55
+          },
+          {
+            "word": "помогает",
+            "start": 31.86,
+            "end": 32.36,
+            "confidence": 0.99609375,
+            "punctuated_word": "помогает",
+            "word_id": 56
+          },
+          {
+            "word": "осьминогу",
+            "start": 32.5,
+            "end": 32.82,
+            "confidence": 0.99853516,
+            "punctuated_word": "осьминогу",
+            "word_id": 57
+          },
+          {
+            "word": "маскироваться",
+            "start": 32.82,
+            "end": 33.32,
+            "confidence": 0.99609375,
+            "punctuated_word": "маскироваться",
+            "word_id": 58
+          },
+          {
+            "word": "и",
+            "start": 33.86,
+            "end": 34.1,
+            "confidence": 0.99902344,
+            "punctuated_word": "и",
+            "word_id": 59
+          },
+          {
+            "word": "может",
+            "start": 34.1,
+            "end": 34.34,
+            "confidence": 0.99902344,
+            "punctuated_word": "может",
+            "word_id": 60
+          },
+          {
+            "word": "служить",
+            "start": 34.34,
+            "end": 34.84,
+            "confidence": 1.0,
+            "punctuated_word": "служить",
+            "word_id": 61
+          },
+          {
+            "word": "сигналом",
+            "start": 34.9,
+            "end": 35.4,
+            "confidence": 0.99609375,
+            "punctuated_word": "сигналом.",
+            "word_id": 62
+          },
+          {
+            "word": "у",
+            "start": 35.86,
+            "end": 36.02,
+            "confidence": 0.99609375,
+            "punctuated_word": "У",
+            "word_id": 63
+          },
+          {
+            "word": "некоторых",
+            "start": 36.02,
+            "end": 36.52,
+            "confidence": 1.0,
+            "punctuated_word": "некоторых",
+            "word_id": 64
+          },
+          {
+            "word": "головоногих",
+            "start": 36.58,
+            "end": 37.08,
+            "confidence": 0.9998047,
+            "punctuated_word": "головоногих",
+            "word_id": 65
+          },
+          {
+            "word": "есть",
+            "start": 37.3,
+            "end": 37.54,
+            "confidence": 0.99902344,
+            "punctuated_word": "есть",
+            "word_id": 66
+          },
+          {
+            "word": "и",
+            "start": 37.54,
+            "end": 37.78,
+            "confidence": 0.99609375,
+            "punctuated_word": "и",
+            "word_id": 67
+          },
+          {
+            "word": "отражающие",
+            "start": 37.78,
+            "end": 38.28,
+            "confidence": 0.9980469,
+            "punctuated_word": "отражающие",
+            "word_id": 68
+          },
+          {
+            "word": "структуры",
+            "start": 38.58,
+            "end": 39.08,
+            "confidence": 0.9967448,
+            "punctuated_word": "структуры,",
+            "word_id": 69
+          },
+          {
+            "word": "которые",
+            "start": 39.46,
+            "end": 39.94,
+            "confidence": 0.9941406,
+            "punctuated_word": "которые",
+            "word_id": 70
+          },
+          {
+            "word": "тоже",
+            "start": 39.94,
+            "end": 40.18,
+            "confidence": 0.9951172,
+            "punctuated_word": "тоже",
+            "word_id": 71
+          },
+          {
+            "word": "участвуют",
+            "start": 40.18,
+            "end": 40.68,
+            "confidence": 0.9970703,
+            "punctuated_word": "участвуют",
+            "word_id": 72
+          },
+          {
+            "word": "в",
+            "start": 40.739998,
+            "end": 40.9,
+            "confidence": 0.9941406,
+            "punctuated_word": "в",
+            "word_id": 73
+          },
+          {
+            "word": "создании",
+            "start": 40.9,
+            "end": 41.4,
+            "confidence": 0.9995117,
+            "punctuated_word": "создании",
+            "word_id": 74
+          },
+          {
+            "word": "цвета",
+            "start": 41.46,
+            "end": 41.96,
+            "confidence": 0.99365234,
+            "punctuated_word": "цвета.",
+            "word_id": 75
+          }
+        ],
+        "fragments": [
+          {
+            "fragment_index": 1,
+            "text": "Как осьминог меняет цвет? Под его кожей расположены хроматофоры — крошечные органы с эластичными мешочками пигмента. Когда мешочек растягивается, цвет становится заметнее; когда окружающие мышцы расслабляются, мешочек втягивается.",
+            "visual": "Фотография осьминога целиком; затем простая схема слоёв кожи с выделенным хроматофором и его пигментным мешочком.",
+            "first_word_id": 1,
+            "last_word_id": 27,
+            "speech_start": 0.32,
+            "speech_end": 16.435,
+            "rounding_adjusted": false,
+            "display_start": 0.0,
+            "display_end": 17.455
+          },
+          {
+            "fragment_index": 2,
+            "text": "Работой этих мышц управляет нервная система: мозговые центры выбирают рисунок, а нервные клетки включают или выключают группы хроматофоров. Поэтому узор на коже может меняться почти мгновенно.",
+            "visual": "Схема нервной системы, управляющей группами хроматофоров; рядом — последовательность изображений кожи осьминога с разными узорами.",
+            "first_word_id": 28,
+            "last_word_id": 53,
+            "speech_start": 17.455,
+            "speech_end": 30.2,
+            "rounding_adjusted": false,
+            "display_start": 17.455,
+            "display_end": 30.98
+          },
+          {
+            "fragment_index": 3,
+            "text": "Смена окраски помогает осьминогу маскироваться и может служить сигналом. У некоторых головоногих есть и отражающие структуры, которые тоже участвуют в создании цвета.",
+            "visual": "Фотография осьминога с заметным рисунком на коже; отдельная простая иллюстрация отражающих структур у некоторых головоногих, без утверждения, что они есть у всех осьминогов.",
+            "first_word_id": 54,
+            "last_word_id": 75,
+            "speech_start": 30.98,
+            "speech_end": 41.96,
+            "rounding_adjusted": false,
+            "display_start": 30.98,
+            "display_end": 42.04
+          }
+        ],
+        "technical_checks": {
+          "passed": true,
+          "sound_present": true,
+          "clipped_samples": 0,
+          "peak_dbfs": -1.3144952002134358,
+          "rms_dbfs": -16.194823049891358,
+          "container": "WAV",
+          "audio_sha256": "92456790bfacd9f8d6bab3bb1a3bc0ced4f0635701a3d6c38e5593ab6de7f905",
+          "measurement": "fresh_current_pcm16",
+          "sample_rate": 24000,
+          "channels": 1,
+          "issues": []
+        },
+        "audio_path": "voiceover/b859e02ac123cc73_0/audio.wav"
+      }
+    },
+    {
+      "source_directory": "outputs/gemini_migration_20261101/topic_2",
+      "script": {
+        "schema_version": 2,
+        "mode": "real",
+        "fragments": [
+          {
+            "text": "Зачем в Древнем Египте строили пирамиды? Прежде всего, они были царскими гробницами.",
+            "visual": "Фотография или иллюстрация египетской пирамиды, показывающая её целиком и знакомящая зрителя с объектом."
+          },
+          {
+            "text": "Египтяне верили, что форма пирамиды напоминает первый холм творения: согласно мифу, земля поднялась из воды. Образ этого холма связывали с возрождением умершего царя в загробной жизни.",
+            "visual": "Простая иллюстрация египетского мифа о первом холме, поднявшемся из воды; рядом — схема, связывающая форму холма с формой пирамиды."
+          },
+          {
+            "text": "Но пирамида была не всем погребальным местом. В комплекс входили храмы, где после смерти царя жрецы продолжали совершать обряды его культа. Так пирамида служила не только гробницей, но и частью места, связанного с посмертной жизнью и почитанием правителя.",
+            "visual": "Схема царского погребального комплекса с пирамидой и связанными с ней храмами; подпись у храмов поясняет, что там продолжали совершать обряды культа царя."
+          }
+        ],
+        "narration_text": "Зачем в Древнем Египте строили пирамиды? Прежде всего, они были царскими гробницами. Египтяне верили, что форма пирамиды напоминает первый холм творения: согласно мифу, земля поднялась из воды. Образ этого холма связывали с возрождением умершего царя в загробной жизни. Но пирамида была не всем погребальным местом. В комплекс входили храмы, где после смерти царя жрецы продолжали совершать обряды его культа. Так пирамида служила не только гробницей, но и частью места, связанного с посмертной жизнью и почитанием правителя.",
+        "script_version_id": "5802db8fb333ba7fe963328fa268a39090dc4287e4b24af90130b392ea2e15b3"
+      },
+      "audio": {
+        "mode": "real",
+        "status": "completed",
+        "script_version_id": "5802db8fb333ba7fe963328fa268a39090dc4287e4b24af90130b392ea2e15b3",
+        "audio_sha256": "05f9c0479ea6c86b2aeca84ca70903adad6750cdd6334fc0fe861d86ce2f9fd9",
+        "duration_seconds": 36.0,
+        "total_duration_seconds": 36.0,
+        "audio_kind": "ai_generated_speech",
+        "timing_status": "aligned_to_deepgram_words",
+        "text_verified": true,
+        "openai_transcript": {
+          "text": "Зачем в древнем Египте строили пирамиды? Прежде всего, они были царскими гробницами. Египтяне верили, что форма пирамиды напоминает первый холм творения. Согласно мифу, земля поднялась из воды. Образ этого холма связывали с возрождением умершего царя в загробной жизни. Но пирамида была не всем погребальным местом. В комплекс входили храмы, где после смерти царя жрецы продолжали совершать обряды его культа. Так пирамида служила не только гробницей, но и частью места, связанного с посмертной жизнью и почитанием правителя.",
+          "languages": [
+            {
+              "code": "ru"
+            }
+          ],
+          "usage": {
+            "type": "duration",
+            "seconds": 36
+          }
+        },
+        "transcript": "Зачем в Древнем Египте строили пирамиды? Прежде всего они были царскими гробницами. Египтяне верили, что форма пирамиды напоминает первый холм творения. Согласно мифу земля поднялась из воды. Образ этого холма связывали с возрождением умершего царя в загробной жизни. Но пирамида была не всем погребальным местом. В комплекс ходили храмы, где после смерти царя жрецы продолжали совершать обряды его культа. Так пирамида служила не только гробницей, но и частью места, связанного с посмертной жизнью и почитанием правителя.",
+        "text_confirmation": {
+          "policy_version": "openai-primary-v1",
+          "approved": true,
+          "basis": "normalized_full_openai_match",
+          "normalized_full_match": true,
+          "original_gpt_decision": "Можно использовать",
+          "timing_source": "deepgram_words",
+          "deepgram_text_can_veto": false
+        },
+        "review": {
+          "decision": "Можно использовать",
+          "issues": [],
+          "fragments": [
+            {
+              "fragment_index": 1,
+              "first_word_id": 1,
+              "last_word_id": 12
+            },
+            {
+              "fragment_index": 2,
+              "first_word_id": 13,
+              "last_word_id": 38
+            },
+            {
+              "fragment_index": 3,
+              "first_word_id": 39,
+              "last_word_id": 76
+            }
+          ],
+          "verification_version": 2,
+          "assessments": [
+            {
+              "fragment_index": 1,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": true,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (normalized_full_openai_match). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            },
+            {
+              "fragment_index": 2,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": true,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (normalized_full_openai_match). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            },
+            {
+              "fragment_index": 3,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": false,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (normalized_full_openai_match). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            }
+          ]
+        },
+        "words": [
+          {
+            "word": "зачем",
+            "start": 0.24,
+            "end": 0.71999997,
+            "confidence": 0.9980469,
+            "punctuated_word": "Зачем",
+            "word_id": 1
+          },
+          {
+            "word": "в",
+            "start": 0.71999997,
+            "end": 0.96,
+            "confidence": 0.9980469,
+            "punctuated_word": "в",
+            "word_id": 2
+          },
+          {
+            "word": "древнем",
+            "start": 0.96,
+            "end": 1.4399999,
+            "confidence": 0.8625488,
+            "punctuated_word": "Древнем",
+            "word_id": 3
+          },
+          {
+            "word": "египте",
+            "start": 1.4399999,
+            "end": 1.92,
+            "confidence": 0.9995117,
+            "punctuated_word": "Египте",
+            "word_id": 4
+          },
+          {
+            "word": "строили",
+            "start": 1.92,
+            "end": 2.32,
+            "confidence": 0.99902344,
+            "punctuated_word": "строили",
+            "word_id": 5
+          },
+          {
+            "word": "пирамиды",
+            "start": 2.32,
+            "end": 2.82,
+            "confidence": 0.9848633,
+            "punctuated_word": "пирамиды?",
+            "word_id": 6
+          },
+          {
+            "word": "прежде",
+            "start": 3.36,
+            "end": 3.84,
+            "confidence": 0.99902344,
+            "punctuated_word": "Прежде",
+            "word_id": 7
+          },
+          {
+            "word": "всего",
+            "start": 3.84,
+            "end": 4.08,
+            "confidence": 0.7338867,
+            "punctuated_word": "всего",
+            "word_id": 8
+          },
+          {
+            "word": "они",
+            "start": 4.08,
+            "end": 4.3199997,
+            "confidence": 0.9970703,
+            "punctuated_word": "они",
+            "word_id": 9
+          },
+          {
+            "word": "были",
+            "start": 4.3199997,
+            "end": 4.64,
+            "confidence": 1.0,
+            "punctuated_word": "были",
+            "word_id": 10
+          },
+          {
+            "word": "царскими",
+            "start": 4.64,
+            "end": 5.12,
+            "confidence": 0.99853516,
+            "punctuated_word": "царскими",
+            "word_id": 11
+          },
+          {
+            "word": "гробницами",
+            "start": 5.12,
+            "end": 5.62,
+            "confidence": 0.98657227,
+            "punctuated_word": "гробницами.",
+            "word_id": 12
+          },
+          {
+            "word": "египтяне",
+            "start": 6.3999996,
+            "end": 6.8999996,
+            "confidence": 0.9983724,
+            "punctuated_word": "Египтяне",
+            "word_id": 13
+          },
+          {
+            "word": "верили",
+            "start": 7.04,
+            "end": 7.44,
+            "confidence": 0.99560547,
+            "punctuated_word": "верили,",
+            "word_id": 14
+          },
+          {
+            "word": "что",
+            "start": 7.44,
+            "end": 7.6,
+            "confidence": 1.0,
+            "punctuated_word": "что",
+            "word_id": 15
+          },
+          {
+            "word": "форма",
+            "start": 7.6,
+            "end": 7.9199996,
+            "confidence": 0.99316406,
+            "punctuated_word": "форма",
+            "word_id": 16
+          },
+          {
+            "word": "пирамиды",
+            "start": 7.9199996,
+            "end": 8.42,
+            "confidence": 0.9946289,
+            "punctuated_word": "пирамиды",
+            "word_id": 17
+          },
+          {
+            "word": "напоминает",
+            "start": 8.559999,
+            "end": 9.059999,
+            "confidence": 0.99316406,
+            "punctuated_word": "напоминает",
+            "word_id": 18
+          },
+          {
+            "word": "первый",
+            "start": 9.2,
+            "end": 9.679999,
+            "confidence": 0.9506836,
+            "punctuated_word": "первый",
+            "word_id": 19
+          },
+          {
+            "word": "холм",
+            "start": 9.679999,
+            "end": 10.08,
+            "confidence": 0.9951172,
+            "punctuated_word": "холм",
+            "word_id": 20
+          },
+          {
+            "word": "творения",
+            "start": 10.08,
+            "end": 10.58,
+            "confidence": 0.9206543,
+            "punctuated_word": "творения.",
+            "word_id": 21
+          },
+          {
+            "word": "согласно",
+            "start": 11.04,
+            "end": 11.5199995,
+            "confidence": 0.99902344,
+            "punctuated_word": "Согласно",
+            "word_id": 22
+          },
+          {
+            "word": "мифу",
+            "start": 11.5199995,
+            "end": 11.879999,
+            "confidence": 0.9995117,
+            "punctuated_word": "мифу",
+            "word_id": 23
+          },
+          {
+            "word": "земля",
+            "start": 11.879999,
+            "end": 12.24,
+            "confidence": 0.6845703,
+            "punctuated_word": "земля",
+            "word_id": 24
+          },
+          {
+            "word": "поднялась",
+            "start": 12.24,
+            "end": 12.74,
+            "confidence": 0.9980469,
+            "punctuated_word": "поднялась",
+            "word_id": 25
+          },
+          {
+            "word": "из",
+            "start": 12.799999,
+            "end": 12.96,
+            "confidence": 0.99902344,
+            "punctuated_word": "из",
+            "word_id": 26
+          },
+          {
+            "word": "воды",
+            "start": 12.96,
+            "end": 13.425,
+            "confidence": 0.99316406,
+            "punctuated_word": "воды.",
+            "word_id": 27
+          },
+          {
+            "word": "образ",
+            "start": 13.905,
+            "end": 14.305,
+            "confidence": 0.9941406,
+            "punctuated_word": "Образ",
+            "word_id": 28
+          },
+          {
+            "word": "этого",
+            "start": 14.305,
+            "end": 14.625,
+            "confidence": 0.99902344,
+            "punctuated_word": "этого",
+            "word_id": 29
+          },
+          {
+            "word": "холма",
+            "start": 14.625,
+            "end": 15.1050005,
+            "confidence": 0.9980469,
+            "punctuated_word": "холма",
+            "word_id": 30
+          },
+          {
+            "word": "связывали",
+            "start": 15.1050005,
+            "end": 15.505,
+            "confidence": 0.9975586,
+            "punctuated_word": "связывали",
+            "word_id": 31
+          },
+          {
+            "word": "с",
+            "start": 15.505,
+            "end": 15.665,
+            "confidence": 0.99902344,
+            "punctuated_word": "с",
+            "word_id": 32
+          },
+          {
+            "word": "возрождением",
+            "start": 15.665,
+            "end": 16.165,
+            "confidence": 0.9635417,
+            "punctuated_word": "возрождением",
+            "word_id": 33
+          },
+          {
+            "word": "умершего",
+            "start": 16.465,
+            "end": 16.945,
+            "confidence": 0.9980469,
+            "punctuated_word": "умершего",
+            "word_id": 34
+          },
+          {
+            "word": "царя",
+            "start": 16.945,
+            "end": 17.265,
+            "confidence": 0.99609375,
+            "punctuated_word": "царя",
+            "word_id": 35
+          },
+          {
+            "word": "в",
+            "start": 17.265,
+            "end": 17.425,
+            "confidence": 0.9970703,
+            "punctuated_word": "в",
+            "word_id": 36
+          },
+          {
+            "word": "загробной",
+            "start": 17.425,
+            "end": 17.925,
+            "confidence": 1.0,
+            "punctuated_word": "загробной",
+            "word_id": 37
+          },
+          {
+            "word": "жизни",
+            "start": 18.545,
+            "end": 18.865,
+            "confidence": 0.939209,
+            "punctuated_word": "жизни.",
+            "word_id": 38
+          },
+          {
+            "word": "но",
+            "start": 18.865,
+            "end": 19.105,
+            "confidence": 0.9951172,
+            "punctuated_word": "Но",
+            "word_id": 39
+          },
+          {
+            "word": "пирамида",
+            "start": 19.105,
+            "end": 19.605,
+            "confidence": 0.9748535,
+            "punctuated_word": "пирамида",
+            "word_id": 40
+          },
+          {
+            "word": "была",
+            "start": 19.665,
+            "end": 19.905,
+            "confidence": 0.97802734,
+            "punctuated_word": "была",
+            "word_id": 41
+          },
+          {
+            "word": "не",
+            "start": 19.905,
+            "end": 20.145,
+            "confidence": 0.99902344,
+            "punctuated_word": "не",
+            "word_id": 42
+          },
+          {
+            "word": "всем",
+            "start": 20.145,
+            "end": 20.385,
+            "confidence": 0.99902344,
+            "punctuated_word": "всем",
+            "word_id": 43
+          },
+          {
+            "word": "погребальным",
+            "start": 20.385,
+            "end": 20.885,
+            "confidence": 0.9926758,
+            "punctuated_word": "погребальным",
+            "word_id": 44
+          },
+          {
+            "word": "местом",
+            "start": 20.945,
+            "end": 21.445,
+            "confidence": 0.9296875,
+            "punctuated_word": "местом.",
+            "word_id": 45
+          },
+          {
+            "word": "в",
+            "start": 21.744999,
+            "end": 21.985,
+            "confidence": 0.9970703,
+            "punctuated_word": "В",
+            "word_id": 46
+          },
+          {
+            "word": "комплекс",
+            "start": 21.985,
+            "end": 22.305,
+            "confidence": 0.99902344,
+            "punctuated_word": "комплекс",
+            "word_id": 47
+          },
+          {
+            "word": "ходили",
+            "start": 22.305,
+            "end": 22.805,
+            "confidence": 0.8586426,
+            "punctuated_word": "ходили",
+            "word_id": 48
+          },
+          {
+            "word": "храмы",
+            "start": 22.865,
+            "end": 23.365,
+            "confidence": 0.98657227,
+            "punctuated_word": "храмы,",
+            "word_id": 49
+          },
+          {
+            "word": "где",
+            "start": 23.425,
+            "end": 23.744999,
+            "confidence": 0.9980469,
+            "punctuated_word": "где",
+            "word_id": 50
+          },
+          {
+            "word": "после",
+            "start": 23.744999,
+            "end": 24.064999,
+            "confidence": 0.98535156,
+            "punctuated_word": "после",
+            "word_id": 51
+          },
+          {
+            "word": "смерти",
+            "start": 24.064999,
+            "end": 24.385,
+            "confidence": 0.99902344,
+            "punctuated_word": "смерти",
+            "word_id": 52
+          },
+          {
+            "word": "царя",
+            "start": 24.385,
+            "end": 24.785,
+            "confidence": 0.99902344,
+            "punctuated_word": "царя",
+            "word_id": 53
+          },
+          {
+            "word": "жрецы",
+            "start": 24.785,
+            "end": 25.265,
+            "confidence": 0.9970703,
+            "punctuated_word": "жрецы",
+            "word_id": 54
+          },
+          {
+            "word": "продолжали",
+            "start": 25.265,
+            "end": 25.765,
+            "confidence": 0.99902344,
+            "punctuated_word": "продолжали",
+            "word_id": 55
+          },
+          {
+            "word": "совершать",
+            "start": 25.825,
+            "end": 26.325,
+            "confidence": 0.99902344,
+            "punctuated_word": "совершать",
+            "word_id": 56
+          },
+          {
+            "word": "обряды",
+            "start": 26.385,
+            "end": 26.785,
+            "confidence": 1.0,
+            "punctuated_word": "обряды",
+            "word_id": 57
+          },
+          {
+            "word": "его",
+            "start": 26.785,
+            "end": 27.025,
+            "confidence": 0.99609375,
+            "punctuated_word": "его",
+            "word_id": 58
+          },
+          {
+            "word": "культа",
+            "start": 27.025,
+            "end": 27.525,
+            "confidence": 0.9980469,
+            "punctuated_word": "культа.",
+            "word_id": 59
+          },
+          {
+            "word": "так",
+            "start": 28.114937,
+            "end": 28.514936,
+            "confidence": 0.84814453,
+            "punctuated_word": "Так",
+            "word_id": 60
+          },
+          {
+            "word": "пирамида",
+            "start": 28.514936,
+            "end": 28.994938,
+            "confidence": 0.91064453,
+            "punctuated_word": "пирамида",
+            "word_id": 61
+          },
+          {
+            "word": "служила",
+            "start": 28.994938,
+            "end": 29.394938,
+            "confidence": 0.9970703,
+            "punctuated_word": "служила",
+            "word_id": 62
+          },
+          {
+            "word": "не",
+            "start": 29.394938,
+            "end": 29.714937,
+            "confidence": 0.99902344,
+            "punctuated_word": "не",
+            "word_id": 63
+          },
+          {
+            "word": "только",
+            "start": 29.714937,
+            "end": 29.954937,
+            "confidence": 1.0,
+            "punctuated_word": "только",
+            "word_id": 64
+          },
+          {
+            "word": "гробницей",
+            "start": 29.954937,
+            "end": 30.454937,
+            "confidence": 0.95092773,
+            "punctuated_word": "гробницей,",
+            "word_id": 65
+          },
+          {
+            "word": "но",
+            "start": 30.914938,
+            "end": 30.994938,
+            "confidence": 0.99609375,
+            "punctuated_word": "но",
+            "word_id": 66
+          },
+          {
+            "word": "и",
+            "start": 30.994938,
+            "end": 31.154938,
+            "confidence": 0.99902344,
+            "punctuated_word": "и",
+            "word_id": 67
+          },
+          {
+            "word": "частью",
+            "start": 31.154938,
+            "end": 31.654938,
+            "confidence": 0.9980469,
+            "punctuated_word": "частью",
+            "word_id": 68
+          },
+          {
+            "word": "места",
+            "start": 31.714937,
+            "end": 32.214935,
+            "confidence": 0.8203125,
+            "punctuated_word": "места,",
+            "word_id": 69
+          },
+          {
+            "word": "связанного",
+            "start": 32.434937,
+            "end": 32.834938,
+            "confidence": 0.9995117,
+            "punctuated_word": "связанного",
+            "word_id": 70
+          },
+          {
+            "word": "с",
+            "start": 32.834938,
+            "end": 32.994938,
+            "confidence": 1.0,
+            "punctuated_word": "с",
+            "word_id": 71
+          },
+          {
+            "word": "посмертной",
+            "start": 32.994938,
+            "end": 33.494938,
+            "confidence": 0.9996745,
+            "punctuated_word": "посмертной",
+            "word_id": 72
+          },
+          {
+            "word": "жизнью",
+            "start": 33.634937,
+            "end": 34.134937,
+            "confidence": 0.99902344,
+            "punctuated_word": "жизнью",
+            "word_id": 73
+          },
+          {
+            "word": "и",
+            "start": 34.19494,
+            "end": 34.434937,
+            "confidence": 0.9975586,
+            "punctuated_word": "и",
+            "word_id": 74
+          },
+          {
+            "word": "почитанием",
+            "start": 34.434937,
+            "end": 34.934937,
+            "confidence": 0.9916992,
+            "punctuated_word": "почитанием",
+            "word_id": 75
+          },
+          {
+            "word": "правителя",
+            "start": 35.154938,
+            "end": 35.654938,
+            "confidence": 0.9729004,
+            "punctuated_word": "правителя.",
+            "word_id": 76
+          }
+        ],
+        "fragments": [
+          {
+            "fragment_index": 1,
+            "text": "Зачем в Древнем Египте строили пирамиды? Прежде всего, они были царскими гробницами.",
+            "visual": "Фотография или иллюстрация египетской пирамиды, показывающая её целиком и знакомящая зрителя с объектом.",
+            "first_word_id": 1,
+            "last_word_id": 12,
+            "speech_start": 0.24,
+            "speech_end": 5.62,
+            "rounding_adjusted": false,
+            "display_start": 0.0,
+            "display_end": 6.3999996
+          },
+          {
+            "fragment_index": 2,
+            "text": "Египтяне верили, что форма пирамиды напоминает первый холм творения: согласно мифу, земля поднялась из воды. Образ этого холма связывали с возрождением умершего царя в загробной жизни.",
+            "visual": "Простая иллюстрация египетского мифа о первом холме, поднявшемся из воды; рядом — схема, связывающая форму холма с формой пирамиды.",
+            "first_word_id": 13,
+            "last_word_id": 38,
+            "speech_start": 6.3999996,
+            "speech_end": 18.865,
+            "rounding_adjusted": false,
+            "display_start": 6.3999996,
+            "display_end": 18.865
+          },
+          {
+            "fragment_index": 3,
+            "text": "Но пирамида была не всем погребальным местом. В комплекс входили храмы, где после смерти царя жрецы продолжали совершать обряды его культа. Так пирамида служила не только гробницей, но и частью места, связанного с посмертной жизнью и почитанием правителя.",
+            "visual": "Схема царского погребального комплекса с пирамидой и связанными с ней храмами; подпись у храмов поясняет, что там продолжали совершать обряды культа царя.",
+            "first_word_id": 39,
+            "last_word_id": 76,
+            "speech_start": 18.865,
+            "speech_end": 35.654938,
+            "rounding_adjusted": false,
+            "display_start": 18.865,
+            "display_end": 36.0
+          }
+        ],
+        "technical_checks": {
+          "passed": true,
+          "sound_present": true,
+          "clipped_samples": 0,
+          "peak_dbfs": -1.2389625791940095,
+          "rms_dbfs": -16.326427150559685,
+          "container": "WAV",
+          "audio_sha256": "05f9c0479ea6c86b2aeca84ca70903adad6750cdd6334fc0fe861d86ce2f9fd9",
+          "measurement": "fresh_current_pcm16",
+          "sample_rate": 24000,
+          "channels": 1,
+          "issues": []
+        },
+        "audio_path": "voiceover/ead69e2fc6c282fa_0/audio.wav"
+      }
+    },
+    {
+      "source_directory": "outputs/gemini_migration_20261101/topic_3",
+      "script": {
+        "schema_version": 2,
+        "mode": "real",
+        "fragments": [
+          {
+            "text": "Как GPS узнаёт, где находится приёмник? Спутники передают радиосигналы с указанием времени отправки и собственного положения.",
+            "visual": "Фото смартфона с картой и отметкой местоположения; рядом — простая иллюстрация спутников GPS над Землёй."
+          },
+          {
+            "text": "Приёмник сравнивает время отправки сигнала со временем его получения. По задержке и известной скорости радиосигнала — скорости света — он вычисляет расстояние до спутника.",
+            "visual": "Схема пути радиосигнала от спутника к приёмнику: время в пути помогает вычислить расстояние."
+          },
+          {
+            "text": "Сопоставляя расстояния с известными положениями спутников, приёмник определяет своё местоположение. Для обычного расчёта нужны измерения как минимум от четырёх спутников: четвёртое помогает учесть ошибку часов самого приёмника, которому поэтому не нужны атомные часы.",
+            "visual": "Схема с приёмником и четырьмя спутниками, показывающая, как расстояния помогают определить местоположение и учесть неточность часов приёмника."
+          }
+        ],
+        "narration_text": "Как GPS узнаёт, где находится приёмник? Спутники передают радиосигналы с указанием времени отправки и собственного положения. Приёмник сравнивает время отправки сигнала со временем его получения. По задержке и известной скорости радиосигнала — скорости света — он вычисляет расстояние до спутника. Сопоставляя расстояния с известными положениями спутников, приёмник определяет своё местоположение. Для обычного расчёта нужны измерения как минимум от четырёх спутников: четвёртое помогает учесть ошибку часов самого приёмника, которому поэтому не нужны атомные часы.",
+        "script_version_id": "a80ad76ee4e14d533d223dc01cbd1d997f6c5c8807c65627aebc2aa2bd69f8ed"
+      },
+      "audio": {
+        "mode": "real",
+        "status": "completed",
+        "script_version_id": "a80ad76ee4e14d533d223dc01cbd1d997f6c5c8807c65627aebc2aa2bd69f8ed",
+        "audio_sha256": "d52c7643a5c19215dd77626b255d5c0864073809ddb436d0ad364761cfccf631",
+        "duration_seconds": 39.88,
+        "total_duration_seconds": 39.88,
+        "audio_kind": "ai_generated_speech",
+        "timing_status": "aligned_to_deepgram_words",
+        "text_verified": true,
+        "openai_transcript": {
+          "text": "Как GPS узнает, где находится приемник? Спутники передают радиосигналы с указанием времени отправки и собственного положения. Приемник сравнивает время отправки сигнала со временем его получения. По задержке и известной скорости радиосигнала, скорости света, он вычисляет расстояние до спутника. Сопоставляя расстояния с известными положениями спутников, приемник определяет свое местоположение. Для обычного расчета нужны измерения как минимум от четырех спутников. Четвертое помогает учесть ошибку часов самого приемника, которому поэтому не нужны атомные часы.",
+          "languages": [
+            {
+              "code": "ru"
+            }
+          ],
+          "usage": {
+            "type": "duration",
+            "seconds": 40
+          }
+        },
+        "transcript": "Как GPS узнаёт, где находится приёмник? Спутники передают радиосигналы с указанием времени отправки и собственного положения. Приемник сравнивает время отправки сигнала со временем его получения. По задержке и известной скорости радиосигнала скорости света он вычисляет расстояние до спутника. Сопоставляя расстояния с известными положениями спутников, приёмник определяет своё местоположение. Для обычного расчёта нужны измерения как минимум от четырёх спутников. Четвёртая помогает учесть ошибку часов самого приёмника, которому поэтому не нужны атомные часы.",
+        "text_confirmation": {
+          "policy_version": "openai-primary-v1",
+          "approved": true,
+          "basis": "normalized_full_openai_match",
+          "normalized_full_match": true,
+          "original_gpt_decision": "Не уверен",
+          "timing_source": "deepgram_words",
+          "deepgram_text_can_veto": false
+        },
+        "review": {
+          "decision": "Можно использовать",
+          "issues": [],
+          "fragments": [
+            {
+              "fragment_index": 1,
+              "first_word_id": 1,
+              "last_word_id": 16
+            },
+            {
+              "fragment_index": 2,
+              "first_word_id": 17,
+              "last_word_id": 38
+            },
+            {
+              "fragment_index": 3,
+              "first_word_id": 39,
+              "last_word_id": 71
+            }
+          ],
+          "verification_version": 2,
+          "assessments": [
+            {
+              "fragment_index": 1,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": true,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (normalized_full_openai_match). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            },
+            {
+              "fragment_index": 2,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": true,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (normalized_full_openai_match). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            },
+            {
+              "fragment_index": 3,
+              "result": "minor_asr_variation",
+              "deepgram_supports_script": false,
+              "openai_supports_script": true,
+              "same_material_error_in_both": false,
+              "changes_meaning": false,
+              "explanation": "OpenAI подтверждает сценарий (normalized_full_openai_match). Ошибки текста Deepgram не являются ошибками озвучки; Deepgram остаётся источником слов и времени. Исходное GPT-решение сохранено отдельно."
+            }
+          ]
+        },
+        "words": [
+          {
+            "word": "как",
+            "start": 0.32,
+            "end": 0.48,
+            "confidence": 0.9921875,
+            "punctuated_word": "Как",
+            "word_id": 1
+          },
+          {
+            "word": "gps",
+            "start": 0.48,
+            "end": 0.98,
+            "confidence": 0.9951172,
+            "punctuated_word": "GPS",
+            "word_id": 2
+          },
+          {
+            "word": "узнаёт",
+            "start": 1.12,
+            "end": 1.62,
+            "confidence": 0.8847656,
+            "punctuated_word": "узнаёт,",
+            "word_id": 3
+          },
+          {
+            "word": "где",
+            "start": 1.8399999,
+            "end": 2.24,
+            "confidence": 0.98828125,
+            "punctuated_word": "где",
+            "word_id": 4
+          },
+          {
+            "word": "находится",
+            "start": 2.24,
+            "end": 2.56,
+            "confidence": 0.99609375,
+            "punctuated_word": "находится",
+            "word_id": 5
+          },
+          {
+            "word": "приёмник",
+            "start": 2.56,
+            "end": 3.06,
+            "confidence": 0.8929036,
+            "punctuated_word": "приёмник?",
+            "word_id": 6
+          },
+          {
+            "word": "спутники",
+            "start": 4.08,
+            "end": 4.58,
+            "confidence": 0.99902344,
+            "punctuated_word": "Спутники",
+            "word_id": 7
+          },
+          {
+            "word": "передают",
+            "start": 4.64,
+            "end": 5.12,
+            "confidence": 0.99902344,
+            "punctuated_word": "передают",
+            "word_id": 8
+          },
+          {
+            "word": "радиосигналы",
+            "start": 5.12,
+            "end": 5.62,
+            "confidence": 0.9970703,
+            "punctuated_word": "радиосигналы",
+            "word_id": 9
+          },
+          {
+            "word": "с",
+            "start": 6.08,
+            "end": 6.16,
+            "confidence": 0.99316406,
+            "punctuated_word": "с",
+            "word_id": 10
+          },
+          {
+            "word": "указанием",
+            "start": 6.16,
+            "end": 6.66,
+            "confidence": 0.9944661,
+            "punctuated_word": "указанием",
+            "word_id": 11
+          },
+          {
+            "word": "времени",
+            "start": 6.8799996,
+            "end": 7.3799996,
+            "confidence": 0.9980469,
+            "punctuated_word": "времени",
+            "word_id": 12
+          },
+          {
+            "word": "отправки",
+            "start": 7.44,
+            "end": 7.9199996,
+            "confidence": 1.0,
+            "punctuated_word": "отправки",
+            "word_id": 13
+          },
+          {
+            "word": "и",
+            "start": 7.9199996,
+            "end": 8.42,
+            "confidence": 0.9975586,
+            "punctuated_word": "и",
+            "word_id": 14
+          },
+          {
+            "word": "собственного",
+            "start": 8.48,
+            "end": 8.88,
+            "confidence": 0.9980469,
+            "punctuated_word": "собственного",
+            "word_id": 15
+          },
+          {
+            "word": "положения",
+            "start": 8.88,
+            "end": 9.38,
+            "confidence": 0.9921875,
+            "punctuated_word": "положения.",
+            "word_id": 16
+          },
+          {
+            "word": "приемник",
+            "start": 10.24,
+            "end": 10.74,
+            "confidence": 0.78808594,
+            "punctuated_word": "Приемник",
+            "word_id": 17
+          },
+          {
+            "word": "сравнивает",
+            "start": 10.8,
+            "end": 11.3,
+            "confidence": 0.99902344,
+            "punctuated_word": "сравнивает",
+            "word_id": 18
+          },
+          {
+            "word": "время",
+            "start": 11.5199995,
+            "end": 11.84,
+            "confidence": 0.99902344,
+            "punctuated_word": "время",
+            "word_id": 19
+          },
+          {
+            "word": "отправки",
+            "start": 11.84,
+            "end": 12.34,
+            "confidence": 1.0,
+            "punctuated_word": "отправки",
+            "word_id": 20
+          },
+          {
+            "word": "сигнала",
+            "start": 12.4,
+            "end": 12.9,
+            "confidence": 0.99609375,
+            "punctuated_word": "сигнала",
+            "word_id": 21
+          },
+          {
+            "word": "со",
+            "start": 12.96,
+            "end": 13.46,
+            "confidence": 0.9921875,
+            "punctuated_word": "со",
+            "word_id": 22
+          },
+          {
+            "word": "временем",
+            "start": 13.5199995,
+            "end": 13.679999,
+            "confidence": 0.9970703,
+            "punctuated_word": "временем",
+            "word_id": 23
+          },
+          {
+            "word": "его",
+            "start": 13.679999,
+            "end": 13.84,
+            "confidence": 0.9970703,
+            "punctuated_word": "его",
+            "word_id": 24
+          },
+          {
+            "word": "получения",
+            "start": 13.84,
+            "end": 14.34,
+            "confidence": 0.9947917,
+            "punctuated_word": "получения.",
+            "word_id": 25
+          },
+          {
+            "word": "по",
+            "start": 14.985,
+            "end": 15.1449995,
+            "confidence": 0.99121094,
+            "punctuated_word": "По",
+            "word_id": 26
+          },
+          {
+            "word": "задержке",
+            "start": 15.1449995,
+            "end": 15.625,
+            "confidence": 1.0,
+            "punctuated_word": "задержке",
+            "word_id": 27
+          },
+          {
+            "word": "и",
+            "start": 15.625,
+            "end": 16.105,
+            "confidence": 0.9711914,
+            "punctuated_word": "и",
+            "word_id": 28
+          },
+          {
+            "word": "известной",
+            "start": 16.105,
+            "end": 16.585,
+            "confidence": 0.98095703,
+            "punctuated_word": "известной",
+            "word_id": 29
+          },
+          {
+            "word": "скорости",
+            "start": 16.585,
+            "end": 17.065,
+            "confidence": 0.9902344,
+            "punctuated_word": "скорости",
+            "word_id": 30
+          },
+          {
+            "word": "радиосигнала",
+            "start": 17.065,
+            "end": 17.565,
+            "confidence": 0.98860675,
+            "punctuated_word": "радиосигнала",
+            "word_id": 31
+          },
+          {
+            "word": "скорости",
+            "start": 17.945,
+            "end": 18.425,
+            "confidence": 0.56884766,
+            "punctuated_word": "скорости",
+            "word_id": 32
+          },
+          {
+            "word": "света",
+            "start": 18.425,
+            "end": 18.925,
+            "confidence": 0.9550781,
+            "punctuated_word": "света",
+            "word_id": 33
+          },
+          {
+            "word": "он",
+            "start": 19.305,
+            "end": 19.465,
+            "confidence": 0.7270508,
+            "punctuated_word": "он",
+            "word_id": 34
+          },
+          {
+            "word": "вычисляет",
+            "start": 19.465,
+            "end": 19.965,
+            "confidence": 0.9980469,
+            "punctuated_word": "вычисляет",
+            "word_id": 35
+          },
+          {
+            "word": "расстояние",
+            "start": 20.025,
+            "end": 20.525,
+            "confidence": 0.7578125,
+            "punctuated_word": "расстояние",
+            "word_id": 36
+          },
+          {
+            "word": "до",
+            "start": 20.585,
+            "end": 20.825,
+            "confidence": 0.99902344,
+            "punctuated_word": "до",
+            "word_id": 37
+          },
+          {
+            "word": "спутника",
+            "start": 20.825,
+            "end": 21.325,
+            "confidence": 0.9875488,
+            "punctuated_word": "спутника.",
+            "word_id": 38
+          },
+          {
+            "word": "сопоставляя",
+            "start": 22.025,
+            "end": 22.525,
+            "confidence": 0.98307294,
+            "punctuated_word": "Сопоставляя",
+            "word_id": 39
+          },
+          {
+            "word": "расстояния",
+            "start": 22.744999,
+            "end": 23.244999,
+            "confidence": 0.7114258,
+            "punctuated_word": "расстояния",
+            "word_id": 40
+          },
+          {
+            "word": "с",
+            "start": 23.384998,
+            "end": 23.625,
+            "confidence": 0.9970703,
+            "punctuated_word": "с",
+            "word_id": 41
+          },
+          {
+            "word": "известными",
+            "start": 23.625,
+            "end": 24.125,
+            "confidence": 0.9970703,
+            "punctuated_word": "известными",
+            "word_id": 42
+          },
+          {
+            "word": "положениями",
+            "start": 24.265,
+            "end": 24.765,
+            "confidence": 0.99934894,
+            "punctuated_word": "положениями",
+            "word_id": 43
+          },
+          {
+            "word": "спутников",
+            "start": 24.904999,
+            "end": 25.404999,
+            "confidence": 0.9499512,
+            "punctuated_word": "спутников,",
+            "word_id": 44
+          },
+          {
+            "word": "приёмник",
+            "start": 25.705,
+            "end": 26.205,
+            "confidence": 0.98291016,
+            "punctuated_word": "приёмник",
+            "word_id": 45
+          },
+          {
+            "word": "определяет",
+            "start": 26.265,
+            "end": 26.765,
+            "confidence": 0.9980469,
+            "punctuated_word": "определяет",
+            "word_id": 46
+          },
+          {
+            "word": "своё",
+            "start": 26.904999,
+            "end": 27.224998,
+            "confidence": 0.9428711,
+            "punctuated_word": "своё",
+            "word_id": 47
+          },
+          {
+            "word": "местоположение",
+            "start": 27.224998,
+            "end": 27.724998,
+            "confidence": 0.98461914,
+            "punctuated_word": "местоположение.",
+            "word_id": 48
+          },
+          {
+            "word": "для",
+            "start": 28.789999,
+            "end": 29.109999,
+            "confidence": 0.9980469,
+            "punctuated_word": "Для",
+            "word_id": 49
+          },
+          {
+            "word": "обычного",
+            "start": 29.109999,
+            "end": 29.609999,
+            "confidence": 0.9995117,
+            "punctuated_word": "обычного",
+            "word_id": 50
+          },
+          {
+            "word": "расчёта",
+            "start": 29.67,
+            "end": 30.07,
+            "confidence": 0.9655762,
+            "punctuated_word": "расчёта",
+            "word_id": 51
+          },
+          {
+            "word": "нужны",
+            "start": 30.07,
+            "end": 30.47,
+            "confidence": 0.85546875,
+            "punctuated_word": "нужны",
+            "word_id": 52
+          },
+          {
+            "word": "измерения",
+            "start": 30.47,
+            "end": 30.949999,
+            "confidence": 0.9921875,
+            "punctuated_word": "измерения",
+            "word_id": 53
+          },
+          {
+            "word": "как",
+            "start": 30.949999,
+            "end": 31.189999,
+            "confidence": 0.8730469,
+            "punctuated_word": "как",
+            "word_id": 54
+          },
+          {
+            "word": "минимум",
+            "start": 31.189999,
+            "end": 31.67,
+            "confidence": 1.0,
+            "punctuated_word": "минимум",
+            "word_id": 55
+          },
+          {
+            "word": "от",
+            "start": 31.67,
+            "end": 31.75,
+            "confidence": 0.9863281,
+            "punctuated_word": "от",
+            "word_id": 56
+          },
+          {
+            "word": "четырёх",
+            "start": 31.75,
+            "end": 32.25,
+            "confidence": 0.48266602,
+            "punctuated_word": "четырёх",
+            "word_id": 57
+          },
+          {
+            "word": "спутников",
+            "start": 33.03,
+            "end": 33.53,
+            "confidence": 0.9099121,
+            "punctuated_word": "спутников.",
+            "word_id": 58
+          },
+          {
+            "word": "четвёртая",
+            "start": 33.59,
+            "end": 33.829998,
+            "confidence": 0.57666016,
+            "punctuated_word": "Четвёртая",
+            "word_id": 59
+          },
+          {
+            "word": "помогает",
+            "start": 33.829998,
+            "end": 34.309998,
+            "confidence": 0.97314453,
+            "punctuated_word": "помогает",
+            "word_id": 60
+          },
+          {
+            "word": "учесть",
+            "start": 34.309998,
+            "end": 34.79,
+            "confidence": 0.9975586,
+            "punctuated_word": "учесть",
+            "word_id": 61
+          },
+          {
+            "word": "ошибку",
+            "start": 34.79,
+            "end": 35.29,
+            "confidence": 0.99560547,
+            "punctuated_word": "ошибку",
+            "word_id": 62
+          },
+          {
+            "word": "часов",
+            "start": 35.59,
+            "end": 35.75,
+            "confidence": 0.9941406,
+            "punctuated_word": "часов",
+            "word_id": 63
+          },
+          {
+            "word": "самого",
+            "start": 35.75,
+            "end": 36.149998,
+            "confidence": 0.9980469,
+            "punctuated_word": "самого",
+            "word_id": 64
+          },
+          {
+            "word": "приёмника",
+            "start": 36.149998,
+            "end": 36.649998,
+            "confidence": 0.8063965,
+            "punctuated_word": "приёмника,",
+            "word_id": 65
+          },
+          {
+            "word": "которому",
+            "start": 37.43,
+            "end": 37.51,
+            "confidence": 0.99365234,
+            "punctuated_word": "которому",
+            "word_id": 66
+          },
+          {
+            "word": "поэтому",
+            "start": 37.51,
+            "end": 38.01,
+            "confidence": 0.91015625,
+            "punctuated_word": "поэтому",
+            "word_id": 67
+          },
+          {
+            "word": "не",
+            "start": 38.23,
+            "end": 38.39,
+            "confidence": 0.9873047,
+            "punctuated_word": "не",
+            "word_id": 68
+          },
+          {
+            "word": "нужны",
+            "start": 38.39,
+            "end": 38.87,
+            "confidence": 0.99316406,
+            "punctuated_word": "нужны",
+            "word_id": 69
+          },
+          {
+            "word": "атомные",
+            "start": 38.87,
+            "end": 39.27,
+            "confidence": 0.9975586,
+            "punctuated_word": "атомные",
+            "word_id": 70
+          },
+          {
+            "word": "часы",
+            "start": 39.27,
+            "end": 39.77,
+            "confidence": 0.9946289,
+            "punctuated_word": "часы.",
+            "word_id": 71
+          }
+        ],
+        "fragments": [
+          {
+            "fragment_index": 1,
+            "text": "Как GPS узнаёт, где находится приёмник? Спутники передают радиосигналы с указанием времени отправки и собственного положения.",
+            "visual": "Фото смартфона с картой и отметкой местоположения; рядом — простая иллюстрация спутников GPS над Землёй.",
+            "first_word_id": 1,
+            "last_word_id": 16,
+            "speech_start": 0.32,
+            "speech_end": 9.38,
+            "rounding_adjusted": false,
+            "display_start": 0.0,
+            "display_end": 10.24
+          },
+          {
+            "fragment_index": 2,
+            "text": "Приёмник сравнивает время отправки сигнала со временем его получения. По задержке и известной скорости радиосигнала — скорости света — он вычисляет расстояние до спутника.",
+            "visual": "Схема пути радиосигнала от спутника к приёмнику: время в пути помогает вычислить расстояние.",
+            "first_word_id": 17,
+            "last_word_id": 38,
+            "speech_start": 10.24,
+            "speech_end": 21.325,
+            "rounding_adjusted": false,
+            "display_start": 10.24,
+            "display_end": 22.025
+          },
+          {
+            "fragment_index": 3,
+            "text": "Сопоставляя расстояния с известными положениями спутников, приёмник определяет своё местоположение. Для обычного расчёта нужны измерения как минимум от четырёх спутников: четвёртое помогает учесть ошибку часов самого приёмника, которому поэтому не нужны атомные часы.",
+            "visual": "Схема с приёмником и четырьмя спутниками, показывающая, как расстояния помогают определить местоположение и учесть неточность часов приёмника.",
+            "first_word_id": 39,
+            "last_word_id": 71,
+            "speech_start": 22.025,
+            "speech_end": 39.77,
+            "rounding_adjusted": false,
+            "display_start": 22.025,
+            "display_end": 39.88
+          }
+        ],
+        "technical_checks": {
+          "passed": true,
+          "sound_present": true,
+          "clipped_samples": 0,
+          "peak_dbfs": -0.9864812908303735,
+          "rms_dbfs": -15.214664087650513,
+          "container": "WAV",
+          "audio_sha256": "d52c7643a5c19215dd77626b255d5c0864073809ddb436d0ad364761cfccf631",
+          "measurement": "fresh_current_pcm16",
+          "sample_rate": 24000,
+          "channels": 1,
+          "issues": []
+        },
+        "audio_path": "voiceover/932c3cebb86671b8_0/audio.wav"
+      }
+    }
+  ]
+}

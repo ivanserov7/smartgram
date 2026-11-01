@@ -1,0 +1,31 @@
+# Локальное окружение и секреты
+.venv/
+.env
+.env.*
+!.env.example
+
+# Кеши Python и инструментов
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Временные файлы и результаты конвейера
+tmp/
+temp/
+output/
+outputs/
+*.tmp
+*.log
+*.swp
+*~
+.DS_Store
+
+# Separate working copies, review media, and server runtime data
+.isolated/
+review/
+node_modules/
+server_data/
+*.pem
+*.key

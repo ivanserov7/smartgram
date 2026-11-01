@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "external_site_updated": false,
+  "notice": "Это точное описание изменений для отдельного интерфейса. Публикация сайта не выполнялась.",
+  "defaults": {
+    "tts_provider": "gemini",
+    "tts_api": "interactions",
+    "tts_model": "gemini-3.8-flash-tts",
+    "tts_voice": "Kore",
+    "tts_style": "Русскоязычный профессиональный диктор. Нейтральное литературное русское произношение, естественная разговорная интонация, правильные ударения и смысловые паузы. Спокойная, живая подача короткого научно-популярного видео. Нормальный темп без спешки и растягивания слов; без рекламного пафоса и театральности. GPS произносится “джи-пи-эс”",
+    "tts_adapter_version": "gemini-interactions-wav-v1",
+    "tts_timeout_seconds": 180,
+    "tts_max_retries": 1,
+    "max_text_regenerations": 1,
+    "narrator_prompt_file": "prompts/voice_narrator.txt",
+    "asr_provider": "deepgram",
+    "asr_model": "nova-2",
+    "asr_language": "ru",
+    "asr_punctuate": true,
+    "asr_smart_format": false,
+    "asr_timeout_seconds": 120,
+    "asr_max_retries": 1,
+    "check_model": "gpt-6-luna",
+    "check_reasoning_effort": "low",
+    "check_timeout_seconds": 120,
+    "check_max_retries": 1,
+    "check_prompt_file": "prompts/voice_check.txt",
+    "confirm_model": "gpt-transcribe",
+    "confirm_timeout_seconds": 120,
+    "confirm_max_retries": 1,
+    "timing_tolerance_seconds": 0.02
+  },
+  "visible_synthesis_fields": [
+    "tts_provider",
+    "tts_model",
+    "tts_voice",
+    "tts_style"
+  ],
+  "secret_handling": {
+    "GEMINI_API_KEY": "только локальная .env; не экспортировать значения"
+  },
+  "user_steps": [
+    {
+      "id": "synthesis",
+      "title": "Синтез голоса",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash-tts",
+      "voice": "Kore"
+    },
+    {
+      "id": "recognition",
+      "title": "Две независимые расшифровки",
+      "providers": [
+        "deepgram",
+        "openai"
+      ]
+    },
+    {
+      "id": "verification",
+      "title": "GPT-проверка текста и привязка",
+      "timings_from": "deepgram_words"
+    },
+    {
+      "id": "result",
+      "title": "Результат и прослушивание",
+      "speech_quality": "Ожидает прослушивания пользователя"
+    }
+  ],
+  "output_contract": {
+    "manifest": "audio_manifest.json",
+    "schema_version": 3,
+    "required_audio_fields": [
+      "audio_path",
+      "audio_sha256",
+      "duration_seconds",
+      "provider",
+      "model",
+      "voice",
+      "style",
+      "mime_type",
+      "sample_rate",
+      "channels",
+      "usage",
+      "request_id"
+    ],
+    "timing_fields": [
+      "speech_start",
+      "speech_end",
+      "display_start",
+      "display_end"
+    ],
+    "no_separate_timing_step": true
+  },
+  "migration": {
+    "old_openai_audio_reusable_as_gemini_tts": false,
+    "tts_identity": [
+      "provider",
+      "model",
+      "voice",
+      "exact_text",
+      "style",
+      "adapter_version",
+      "format"
+    ],
+    "minor_asr_difference_is_not_a_reading_error": true,
+    "uncertainty_requires_manual_review": true
+  }
+}
