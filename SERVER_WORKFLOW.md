@@ -107,7 +107,8 @@ journalctl -u smartgram-panel -n 50
 - Все 3682 файла (3 069 508 668 байт) импортированы; SHA-256 проверены.
   WAV, изображения и manifests совпадают с Mac; исходная ведомость сохранена,
   актуальная — `/etc/smartgram/import-inventory-final.json`.
-- 58 офлайн Python-тестов и 4 Node-теста адаптера/готовности/drain прошли на Linux.
+- На Linux: 55 офлайн Python-тестов прошли, 3 проверки локальных Mac-файлов
+  пропущены в отдельной dev-копии; 4 Node-теста адаптера/готовности/drain прошли.
 - Единственный editing-only smoke использовал принятый набор GPS:
   `/var/lib/smartgram-dev/migration-smoke`. Время 395,75 с, максимум RSS 443652 KiB,
   пик cgroup 557801472 байта (531,9 MiB), без swap. Технические проверки пройдены.
