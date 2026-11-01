@@ -1,0 +1,33 @@
+[Unit]
+Description=Smartgram Gemini-only Alpha VPN proxy
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+DynamicUser=yes
+LoadCredential=client.json:/etc/smartgram-vpn/client.json
+ExecStart=/usr/local/libexec/smartgram-xray run -config %d/client.json
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+UMask=0077
+MemoryMax=192M
+TasksMax=48
+CPUQuota=50%
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target

@@ -20,6 +20,7 @@ from file_io import atomic_write, atomic_write_json
 from openai_meter import now_iso
 from voice_api import VoiceAPI
 from voice_errors import VoiceoverError
+from gemini_transport import gemini_proxy_options
 
 
 def synthesis_request(text, settings):
@@ -101,6 +102,7 @@ class GeminiVoiceAPI(VoiceAPI):
             raise VoiceoverError(
                 "Нет GEMINI_API_KEY в .env. Получить ключ: https://aistudio.google.com/api-keys. Не присылайте его в чат."
             )
+        proxy_options = gemini_proxy_options()
         request = synthesis_request(script["narration_text"], self.settings)
         record = {
             "call_id": "gemini_" + uuid.uuid4().hex,
@@ -164,6 +166,7 @@ class GeminiVoiceAPI(VoiceAPI):
 
             try:
                 with httpx.Client(
+                    **proxy_options,
                     timeout=self.settings.tts_timeout_seconds,
                     follow_redirects=False,
                     event_hooks={"request":[on_request],"response": [on_response]},
@@ -277,3 +280,4 @@ class GeminiVoiceAPI(VoiceAPI):
                 raise VoiceoverError(
                     message + " Автоматической смены провайдера нет."
                 ) from None
+
