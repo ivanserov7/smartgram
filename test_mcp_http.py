@@ -54,5 +54,12 @@ class MCPHTTPTests(unittest.IsolatedAsyncioTestCase):
                 response=await self.request('tools/call',{'name':'server_status','arguments':{}})
             self.assertTrue(response.json()['result']['isError'])
 
+    async def test_sdk_validation_errors_never_echo_unknown_input_secrets(self):
+        async with self.session():
+            secret='previously-unknown-opaque-service-credential'
+            response=await self.request('tools/call',{'name':'list_runs','arguments':{'limit':{'input':secret}}})
+            self.assertTrue(response.json()['result']['isError'])
+            self.assertNotIn(secret,response.text)
+
 
 if __name__=='__main__':unittest.main()

@@ -106,7 +106,14 @@ class PrivateEndpoint:
                 if sum(map(len,chunks))>1024*1024:raise RuntimeError('MCP response exceeded limit')
                 if message.get('more_body'):return
                 raw=b''.join(chunks)
-                try:body=self.redactor.serialized(json.loads(raw)).encode()
+                try:
+                    payload=json.loads(raw)
+                    if isinstance(payload,dict) and isinstance(payload.get('result'),dict) and payload['result'].get('isError'):
+                        # SDK argument-validation errors can contain arbitrary, previously unknown input secrets.
+                        payload['result']={'isError':True,'content':[{'type':'text','text':'Tool request rejected or unavailable. Check the tool schema and server_status; no automatic retry was performed.'}]}
+                    if isinstance(payload,dict) and isinstance(payload.get('error'),dict):
+                        payload['error']={'code':payload['error'].get('code',-32603),'message':'MCP request invalid or unavailable.'}
+                    body=self.redactor.serialized(payload).encode()
                 except (ValueError,UnicodeDecodeError):body=self.redactor.text(raw.decode(errors='replace')).encode()
                 start['headers']=[(k,v) for k,v in start.get('headers',[]) if k.lower() not in {b'content-length',b'cache-control'}]+[(b'cache-control',b'no-store')]
                 await send(start);await send({'type':'http.response.body','body':body})
