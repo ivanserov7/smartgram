@@ -36,6 +36,37 @@
 игнорируются. Ошибка прокси не вызывает переключение на прямое соединение.
 Другие клиенты конвейера этой настройкой не изменяются.
 
+## Установленная схема Timeweb
+
+Alpha выдаёт совместимые профили Xray. Клиент — официальный Xray v26.10.31,
+перед установкой проверен SHA-256 release asset. Бинарник:
+`/usr/local/libexec/smartgram-xray`; unit: `smartgram-vpn.service`.
+Шаблон unit без секретов — `server_infra/smartgram-vpn.service`; шаблон порядка
+старта панели — `server_infra/smartgram-panel-vpn.conf` (systemd drop-in).
+
+Подписка и выбранный профиль хранятся только в закрытом `/etc/smartgram-vpn`.
+Рабочий `client.json` имеет права 0600/root и передаётся непривилегированному
+DynamicUser через systemd LoadCredential. Access/error logs Xray отключены;
+ссылки, UUID и ключи не передаются в Git, параметры процессов или журналы.
+
+Вход только HTTP CONNECT на `127.0.0.1:17890`. Разрешён только
+`generativelanguage.googleapis.com:443` через VPN outbound; прочие назначения
+блокируются. Прямого outbound/fallback, TUN, iptables/DNS-перенаправлений и
+глобальных HTTP(S)_PROXY нет. Сайт, SSH, OpenAI, Deepgram и поиск сохраняют
+обычный маршрут. Отказ VPN останавливает только Gemini, панель продолжает работать.
+
+```bash
+# Администратор; не выводить секретный client.json или подписку:
+systemctl status smartgram-vpn
+systemctl is-enabled smartgram-vpn
+systemctl restart smartgram-vpn
+# Публичная доступность сайта и SSH проверяется отдельно.
+```
+
+Замена профиля/продление подписки — отдельное действие администратора с сохранением
+старого закрытого конфига, локальной проверкой Xray и restart только VPN-службы.
+Автоматической ротации узлов и платных TTS-проб нет.
+
 ## Откат
 
 После штатного завершения активного задания убрать `GEMINI_HTTP_PROXY` или

@@ -13,6 +13,11 @@ from voice_errors import VoiceoverError
 
 
 class GeminiTransportTests(unittest.TestCase):
+    def test_safe_default_template_remains_valid_for_source_exports(self):
+        from build_review_archive import validate_env_example
+        template = Path(__file__).with_name('.env.example').read_text()
+        validate_env_example(template)
+
     def test_env_file_and_process_override_do_not_mutate_environment(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / ".env"

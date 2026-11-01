@@ -47,6 +47,8 @@ ALLOWED_EXTENSIONS = {
     ".tsx",
     ".jsx",
     ".sh",
+    ".service",
+    ".conf",
 }
 SECRET_NAME = re.compile(
     r"secret|credential|token|password|private|id_rsa|id_ed25519", re.I
@@ -124,6 +126,9 @@ def validate_env_example(text: str) -> None:
                 raise ValueError(
                     "SMARTGRAM_REVIEW_SYNC_DIR в .env.example должен быть пустым, без личного пути."
                 )
+        elif name == "GEMINI_HTTP_PROXY":
+            if value:
+                raise ValueError("GEMINI_HTTP_PROXY в .env.example должен быть пустым.")
         elif not value:
             raise ValueError("Укажите пример значения настройки в .env.example.")
 
