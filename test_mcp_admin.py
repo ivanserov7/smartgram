@@ -50,6 +50,11 @@ class BrokerSecurityTests(unittest.TestCase):
             root=Path(folder);(root/'log').write_bytes(b'prefix-'+b's'*200+b'\nsafe\n')
             self.assertEqual(admin.inside_bytes(root,['log'],limit=30,tail=True),b'safe\n')
 
+    def test_fifo_artifact_is_rejected_without_blocking_the_privileged_reader(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);os.mkfifo(root/'diagnostic.log')
+            with self.assertRaises(admin.RequestError):admin.inside_bytes(root,['diagnostic.log'])
+
     def test_idempotency_never_starts_a_second_mutation(self):
         with tempfile.TemporaryDirectory() as folder,patch.object(admin,'STATE',Path(folder)),patch.object(admin.subprocess,'run',return_value=SimpleNamespace(returncode=0)) as launch:
             request=admin.validate({'op':'restart','services':['vpn'],'idempotency_key':str(uuid.uuid4())})

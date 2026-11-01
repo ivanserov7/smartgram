@@ -81,7 +81,7 @@ def directory_fd(base,parts=()):
 
 def inside_bytes(base,parts,limit=4*1024*1024,tail=False):
     with directory_fd(base,parts[:-1]) as parent:
-        fd=os.open(parts[-1],os.O_RDONLY|os.O_NOFOLLOW,dir_fd=parent)
+        fd=os.open(parts[-1],os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK,dir_fd=parent)
         with os.fdopen(fd,'rb') as stream:
             info=os.fstat(stream.fileno())
             if not stat.S_ISREG(info.st_mode):raise RequestError('Only regular files are readable.')
