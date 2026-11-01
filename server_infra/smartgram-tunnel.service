@@ -1,0 +1,37 @@
+[Unit]
+Description=Official Secure MCP Tunnel for Smartgram
+Wants=network-online.target smartgram-mcp.service
+After=network-online.target smartgram-mcp.service
+ConditionPathExists=/etc/smartgram-mcp/runtime-api-key
+ConditionPathExists=/etc/smartgram-mcp/tunnel.yaml
+
+[Service]
+User=smartgram-tunnel
+Group=smartgram-tunnel
+WorkingDirectory=/var/lib/smartgram-tunnel
+LoadCredential=runtime-api-key:/etc/smartgram-mcp/runtime-api-key
+LoadCredential=forward-authorization:/etc/smartgram-mcp/forward-authorization
+LoadCredential=tunnel.yaml:/etc/smartgram-mcp/tunnel.yaml
+ExecStart=/usr/local/bin/tunnel-client run --config %d/tunnel.yaml
+Restart=on-failure
+RestartSec=5
+StateDirectory=smartgram-tunnel
+StateDirectoryMode=0700
+RuntimeDirectory=smartgram-tunnel
+RuntimeDirectoryMode=0700
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ReadWritePaths=/var/lib/smartgram-tunnel /run/smartgram-tunnel
+UMask=0077
+MemoryMax=256M
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

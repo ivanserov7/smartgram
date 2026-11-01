@@ -1,0 +1,28 @@
+[Unit]
+Description=Smartgram private administrative MCP server
+After=network.target
+
+[Service]
+User=smartgram-mcp
+Group=smartgram-mcp
+WorkingDirectory=/opt/smartgram-mcp/current
+LoadCredential=bearer-token:/etc/smartgram-mcp/bearer-token
+Environment=MCP_BEARER_TOKEN_FILE=%d/bearer-token
+ExecStart=/opt/smartgram-mcp/venv/bin/python /opt/smartgram-mcp/current/mcp_server.py
+Restart=on-failure
+RestartSec=5
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ReadWritePaths=/var/lib/smartgram-mcp-admin
+# The sole setuid path is the exact root-owned JSON broker in sudoers.
+NoNewPrivileges=no
+UMask=0077
+MemoryMax=256M
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target
