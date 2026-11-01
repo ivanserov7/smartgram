@@ -24,7 +24,8 @@ if __name__=='__main__':
         if not loopback(host):raise AssertionError('External DNS forbidden in CI')
         return original_dns(host,*args,**kwargs)
     socket.socket.connect=connect;socket.getaddrinfo=dns
-    names=['test_web_adapter','test_web_progress','test_server_import','test_voice_authority','test_visual_sequence',
+    names=['test_gemini_transport','test_web_adapter','test_web_progress','test_server_import','test_voice_authority','test_visual_sequence',
            'test_review_regressions','test_general_visual_repair','test_github_update']
     result=unittest.TextTestRunner(verbosity=1).run(unittest.defaultTestLoader.loadTestsFromNames(names))
     raise SystemExit(0 if result.wasSuccessful() else 1)
+
