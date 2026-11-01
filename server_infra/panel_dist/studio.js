@@ -1,6 +1,6 @@
 (async () => {
  'use strict';
- const {markup:progressMarkup,tick:tickProgress,freeze:freezeProgress}=await import('/studio-progress.mjs');
+ const {markup:progressMarkup,tick:tickProgress,freeze:freezeProgress,selectProgressJob}=await import('/studio-progress.mjs');
  document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="/studio-progress.css">');
  setInterval(()=>tickProgress(),1000);
  const $=s=>document.querySelector(s), KEY='smartgram.studio.draft.v1';
@@ -53,7 +53,7 @@
  $('#studio-video-select').onchange=e=>{if(!e.target.value)return;releaseLocal();selectedJob=e.target.value;updateViewer(jobsCache);};
  $('#studio-player').onerror=()=>{$('#studio-player-caption').textContent='Не удалось открыть видео. Проверь доступ к файлу и поддерживает ли браузер его формат.';};
  window.addEventListener('pagehide',releaseLocal);
- function renderRuns(jobs){updateViewer(jobs);const active=jobs.find(j=>j.status==='running')||jobs.find(j=>j.status==='queued')||jobs.find(j=>['failed','interrupted'].includes(j.status));const panel=$('#studio-progress');panel.hidden=!active;if(active)panel.innerHTML='<h3>'+esc(active.request.topic)+'</h3>'+progressMarkup(active);if(!jobs.length){empty('Задай тему и параметры. После запуска здесь появятся статус и готовый файл.');return;} const status={queued:'В очереди',running:'В работе',completed:'Готово',failed:'Ошибка',interrupted:'Прервано',cancelled:'Отменено'};
+ function renderRuns(jobs){updateViewer(jobs);const active=selectProgressJob(jobs);const panel=$('#studio-progress');panel.hidden=!active;if(active)panel.innerHTML='<h3>'+esc(active.request.topic)+'</h3>'+progressMarkup(active);if(!jobs.length){empty('Задай тему и параметры. После запуска здесь появятся статус и готовый файл.');return;} const status={queued:'В очереди',running:'В работе',completed:'Готово',failed:'Ошибка',interrupted:'Прервано',cancelled:'Отменено'};
  $('#studio-runs').innerHTML=jobs.map(j=>`<article class="studio-run"><div class="studio-run-head"><div><h3>${esc(j.request.topic)}</h3><p>${j.request.target_seconds} сек. · ${esc(j.request.output_size.replace('x',' × '))} · ${j.request.subtitles?'С субтитрами':'Без субтитров'}</p><p class="studio-run-time">${esc(new Date(j.created_at).toLocaleString('ru-RU'))}</p></div><span class="studio-run-tag">${esc(status[j.status]||j.status)}</span></div>${j.status==='completed'?'':progressMarkup(j,performance.now(),true)}${j.error?`<p class="studio-run-error">${esc(j.error)}</p>`:''}<div class="studio-run-actions">${j.status==='completed'?`<button data-play="${esc(j.id)}">Смотреть</button><a class="button-link" href="/api/jobs/${esc(j.id)}/video?download=1">Скачать MP4</a>`:''}${j.status==='queued'?`<button data-cancel="${esc(j.id)}">Убрать из очереди</button>`:''}<button data-copy="${esc(j.id)}">Повторить параметры</button></div></article>`).join('');
  $('#studio-runs').querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{fill(jobs.find(j=>j.id===b.dataset.copy).request);persist();pendingKey=null;location.hash='create';});
  $('#studio-runs').querySelectorAll('[data-play]').forEach(b=>b.onclick=()=>{releaseLocal();selectedJob=b.dataset.play;updateViewer(jobsCache);location.hash='create';$('#studio-player').scrollIntoView({behavior:'smooth',block:'center'});$('#studio-player').play().catch(()=>{});});

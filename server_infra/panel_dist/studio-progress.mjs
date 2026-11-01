@@ -1,4 +1,5 @@
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function selectProgressJob(jobs){return jobs.find(j=>j.status==='running')||jobs.find(j=>j.status==='queued')||jobs[0];}
 export function model(job){
  const p=job.progress,known=!!p&&Number.isInteger(p.stage_index)&&p.stage_index>=0&&p.stage_index<p.stage_count;
  if(job.status==='completed')return {percent:100,title:'Ролик готов',detail:'Проверки пройдены · можно смотреть и скачивать',done:true};

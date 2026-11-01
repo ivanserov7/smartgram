@@ -1,7 +1,11 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {jobProgress,progressStages} from './panel_app.mjs';
-import {model,markup,tick,freeze} from './panel_dist/studio-progress.mjs';
+import {model,markup,tick,freeze,selectProgressJob} from './panel_dist/studio-progress.mjs';
 const raw={stage_id:'assets',stage_started_at_ms:100000,stage_elapsed_seconds:9,status:'running'};
+test('latest completion shows ready instead of an old failed job; active work takes priority',()=>{
+ const done={status:'completed'},old={status:'failed'},active={status:'running'};
+ assert.equal(selectProgressJob([done,old]),done);assert.equal(selectProgressJob([done,active,old]),active);
+});
 test('stage timer comes from saved start, survives polling, and failed timer freezes',()=>{
  assert.equal(jobProgress({status:'running'},raw,120000).stage_elapsed_seconds,20);
  assert.equal(jobProgress({status:'running'},raw,125000).stage_elapsed_seconds,25);
