@@ -320,7 +320,8 @@ class SequenceTests(unittest.TestCase):
             atomic_write_json(drive / MARKER_NAME, {"drive_folder_id": DRIVE_FOLDER_ID})
             (drive / "old.mp4").write_bytes(b"previous")
             (drive / "latest.json").write_text("previous archive pointer")
-            fake = root / "test-copy.bin"
+            # Synthetic copy fixture; format decoding is covered by rendering tests.
+            fake = root / "test-copy.mp4"
             fake.write_bytes(b"Explicit test bytes; not a rendered movie")
             status = root / "status.json"
             atomic_write_json(

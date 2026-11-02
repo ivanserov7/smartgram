@@ -13,6 +13,7 @@ from voice_alignment import TEXT_POLICY_VERSION,text_authority,validate_check,va
 from voice_audio_checks import current_audio_checks
 from voice_errors import AudioContractError,AudioAlignmentError,AudioTechnicalError,VoiceoverError
 from voice_settings import load_voiceover_settings
+from voice_lock import voice_lock
 
 
 def digest(value):
@@ -115,6 +116,12 @@ def prepare_local(directory,settings):
 
 
 def reassess_saved(directory,settings=None):
+    with voice_lock(directory):
+        return _reassess_saved_locked(directory, settings)
+
+
+def _reassess_saved_locked(directory,settings=None):
+    """Caller owns .voiceover.lock across the complete read/validate/write cycle."""
     directory=Path(directory).resolve()
     if settings is None:_,settings=load_voiceover_settings(require_keys=False)
     before=read_json(directory/'audio_manifest.json')

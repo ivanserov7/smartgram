@@ -2,7 +2,7 @@
 
 import argparse
 from pathlib import Path
-import shutil
+import sys
 import time
 
 from editing import run_editing
@@ -14,7 +14,7 @@ from editing_inputs import (
     checked_audio,
     checked_visuals,
 )
-from file_io import atomic_write_json
+from file_io import atomic_write_json, atomic_copy, exclusive_lock, LockBusyError, validate_output_name
 from production_state import ProductionError, UpstreamBlocked, read, sha, digest, config
 from script_workflow import approved_script
 
@@ -75,8 +75,31 @@ def existing_ready_release(run, script, audio, visuals):
 def run_batch(inputs_file, output):
     inputs_file = Path(inputs_file).resolve()
     output = Path(output).resolve()
-    output.mkdir(parents=True, exist_ok=True)
     specification = read(inputs_file)
+    entries = specification.get("entries") if isinstance(specification, dict) else None
+    if not isinstance(entries, list) or not entries:
+        raise ProductionError("Assembly inputs must contain a nonempty entries list.")
+    names = set()
+    for entry in entries:
+        try:
+            name = validate_output_name(entry["name"])
+        except (KeyError, TypeError, ValueError) as error:
+            raise ProductionError("Invalid assembly output name: " + str(error)) from None
+        if name in names:
+            raise ProductionError("Assembly output names must be unique.")
+        names.add(name)
+        for field in ("topic", "script_file", "audio_manifest", "materials_file"):
+            if not isinstance(entry.get(field), str) or not entry[field].strip():
+                raise ProductionError(f"Assembly entry {name!r} requires nonempty {field}.")
+    try:
+        with exclusive_lock(output / ".assembly.lock", "Another assembly is running in this output directory."):
+            return _run_batch(specification, output)
+    except LockBusyError as error:
+        raise ProductionError(str(error)) from None
+
+
+def _run_batch(specification, output):
+    """The assembly lock covers snapshots, rendering and summary publication."""
     summary_path = output / "assembly_status.json"
     summary = (
         read(summary_path)
@@ -138,9 +161,10 @@ def run_batch(inputs_file, output):
             quality = read(run / "quality_report.json")
             target = output / (entry["name"] + ".mp4")
             source = run / "video.mp4"
-            if not target.exists() or sha(target) != sha(source):
-                shutil.copyfile(source, target)
-            if sha(target) != sha(source):
+            expected_hash = sha(source)
+            if target.is_symlink() or not target.exists() or sha(target) != expected_hash:
+                atomic_copy(source, target, expected_sha256=expected_hash)
+            if sha(target) != expected_hash or sha(source) != expected_hash:
                 raise ProductionError("SHA готовой копии MP4 не совпадает.")
             result.update(
                 status="ready",
@@ -213,7 +237,11 @@ def main():
     )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    path = run_batch(args.inputs_file, args.output)
+    try:
+        path = run_batch(args.inputs_file, args.output)
+    except (ProductionError, OSError, ValueError) as error:
+        print("Assembly stopped: " + str(error), file=sys.stderr)
+        return 1
     print(path)
     return 0 if read(path)["status"] == "ready" else 1
 

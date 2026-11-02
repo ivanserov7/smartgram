@@ -35,14 +35,24 @@ class WorkflowTests(unittest.TestCase):
         self.scenes = [{"id": number, "narration": f"Текст сцены {number}",
                         "visual_description": "Красный закат над морем", "search_query": "red sunset sky",
                         "material_type": "image"} for number in (1, 2)]
-        content = image_bytes()
-        (self.folder / "original.png").write_bytes(content)
-        candidate = {**parse_candidate(commons_page()), **image_files.inspect_image(content),
-                     "local_path": "original.png", "relevance_score": .9}
-        self.source = {"mode": "real", "scenes": [
-            {"scene_id": number, "search_query": "red sunset sky", "status": "selected",
-             "search_rounds": 1, "candidates": [copy.deepcopy(candidate)], "selected": candidate}
-            for number in (1, 2)]}
+        self.image_size = (1500, 2000)
+        self.source = {"mode": "real", "scenes": []}
+        for number in (1, 2):
+            # Different sources and bytes are required by the one-source-per-
+            # scene rule. Both fixtures also support a full 1080x1920 crop.
+            size = tuple(value + (number - 1) * step for value, step in zip(self.image_size, (3, 4)))
+            content = image_bytes(size)
+            local_path = f"original_{number}.png"
+            (self.folder / local_path).write_bytes(content)
+            candidate = {
+                **parse_candidate(commons_page(f"Red sunset sky {number}", width=size[0], height=size[1])),
+                **image_files.inspect_image(content),
+                "local_path": local_path, "relevance_score": .9,
+            }
+            self.source["scenes"].append({
+                "scene_id": number, "search_query": "red sunset sky", "status": "selected",
+                "search_rounds": 1, "candidates": [copy.deepcopy(candidate)], "selected": candidate,
+            })
         self.save()
         self.calls = []
         for mocked in (
@@ -129,7 +139,7 @@ class WorkflowTests(unittest.TestCase):
         self.run_review(1)
         source = json.loads((self.folder / "visual_manifest.json").read_text())
         candidate = source["scenes"][0]["candidates"][0]
-        content = image_bytes((1300, 1700))
+        content = image_bytes((1600, 2100))
         (self.folder / candidate["local_path"]).write_bytes(content)
         candidate.update(image_files.inspect_image(content))
         (self.folder / "visual_manifest.json").write_text(json.dumps(source))
@@ -150,7 +160,7 @@ class WorkflowTests(unittest.TestCase):
 
     def test_new_limits_invalidate_other_scene_readiness(self):
         self.run_review()
-        with patch.object(image_files, "MIN_HEIGHT", 1800), \
+        with patch.object(image_files, "MIN_HEIGHT", 2500), \
              patch.object(review, "reformulate_query", return_value={"status": "query_rewritten", "search_query": "another sunset"}), \
              patch.object(review, "select_image", return_value={"search_query": "another sunset", "status": "needs_visual", "candidates": [], "selected": None}):
             report = self.run_review(1)
@@ -208,10 +218,9 @@ class WorkflowTests(unittest.TestCase):
 
     def test_empty_search_gets_one_rewrite_and_second_search(self):
         source_entry = self.source["scenes"][0]
+        new = copy.deepcopy(source_entry)
         source_entry.update(candidates=[], selected=None, status="needs_visual", reason="Пустой поиск")
         self.save()
-        new = copy.deepcopy(self.source["scenes"][1])
-        new["scene_id"] = 1
         new["search_query"] = "sunset ocean horizon"
         with patch.object(review, "reformulate_query", return_value={"status": "query_rewritten", "search_query": new["search_query"]}) as rewrite, \
              patch.object(review, "select_image", return_value=new) as search:
@@ -280,7 +289,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(first["analysis_image_sha256"], second["analysis_image_sha256"])
         self.assertEqual((first["analysis_width"], first["analysis_height"]), (768, 1024))
         self.assertNotEqual(first["local_path"], first["analysis_image_path"])
-        self.assertEqual((self.folder / first["local_path"]).read_bytes(), image_bytes())
+        self.assertEqual((self.folder / first["local_path"]).read_bytes(), image_bytes(self.image_size))
 
     def test_forged_license_and_damaged_file_are_not_sent(self):
         entry = copy.deepcopy(self.source["scenes"][0])

@@ -5,6 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {isIP} from 'node:net';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const allowed={target_seconds:[30,45,60],output_size:['720x1280','1080x1920'],audience:['general','teen'],tone:['clear','story']};
@@ -19,10 +20,49 @@ export function validateRequest(v){
  return Object.fromEntries(keys.map(k=>[k,typeof v[k]==='string'?v[k].trim():v[k]]));
 }
 export function passwordRecord(password){const salt=crypto.randomBytes(24).toString('hex');return {salt,hash:crypto.scryptSync(password,salt,64,{N:32768,maxmem:64*1024*1024}).toString('hex')};}
+export function loginAddress(req){
+ const peer=req.socket.remoteAddress||'unknown';
+ // The production listener is behind one local reverse proxy. With an appended
+ // forwarding chain, only the rightmost address belongs to that proxy's client.
+ if(['127.0.0.1','::1','::ffff:127.0.0.1'].includes(peer)){
+  const forwarded=String(req.headers['x-forwarded-for']||'').split(',').at(-1).trim();
+  if(isIP(forwarded))return forwarded;
+ }
+ return peer;
+}
 function atomic(file,value){fs.mkdirSync(path.dirname(file),{recursive:true,mode:0o700});const temp=file+'.tmp';const fd=fs.openSync(temp,'w',0o600);try{fs.writeFileSync(fd,JSON.stringify(value,null,2));fs.fsyncSync(fd);}finally{fs.closeSync(fd);}fs.renameSync(temp,file);const d=fs.openSync(path.dirname(file),'r');try{fs.fsyncSync(d);}finally{fs.closeSync(d);}}
 function secureFile(base,relative){const full=fs.realpathSync(path.resolve(base,relative));if(!full.startsWith(fs.realpathSync(base)+path.sep)||!fs.statSync(full).isFile())throw Error('Недопустимый файл.');return full;}
 const hash=v=>crypto.createHash('sha256').update(v).digest('hex');
 const now=()=>new Date().toISOString();
+// Keep a worker active until it exits, including timeout and shutdown cleanup.
+export function superviseWorker(child, {
+ timeoutMs=30*60*1000,
+ graceMs=5000,
+ signalGroup=(pid,signal)=>process.kill(-pid,signal),
+}={}) {
+ let reason=null,closed=false,escalation=null;
+ const signal=kind=>{
+  if(!Number.isSafeInteger(child.pid)||child.pid<=0)return;
+  try{signalGroup(child.pid,kind);}catch(error){if(error.code!=='ESRCH')throw error;}
+ };
+ const timeout=setTimeout(()=>stop('timeout'),timeoutMs);
+ const finished=new Promise(resolve=>child.once('close',()=>{
+  closed=true;clearTimeout(timeout);clearTimeout(escalation);
+  // A terminated parent may leave descendants that ignored SIGTERM.
+  if(reason)signal('SIGKILL');
+  resolve();
+ }));
+ function stop(cause='shutdown'){
+  if(closed)return finished;
+  reason??=cause;
+  if(!escalation){
+   signal('SIGTERM');
+   escalation=setTimeout(()=>signal('SIGKILL'),graceMs);
+  }
+  return finished;
+ }
+ return {stop,finished,get reason(){return reason;}};
+}
 export const progressStages=JSON.parse(fs.readFileSync(new URL('./progress_stages.json',import.meta.url),'utf8'));
 export function jobProgress(job,raw,clock=Date.now()){
  const index=progressStages.findIndex(s=>s.id===raw?.stage_id);
@@ -70,7 +110,7 @@ export function createPanel(config){
  if(p==='/healthz'&&req.method==='GET')return json(res,200,{ok:true});
  if(p==='/login'&&req.method==='GET')return file(req,res,path.join(root,'server/login.html'),'text/html; charset=utf-8');
  if(p==='/api/login'&&req.method==='POST'){
-  const key=String(req.headers['x-forwarded-for']||req.socket.remoteAddress).split(',')[0].trim();
+  const key=loginAddress(req);
   const time=Date.now();for(const [ip,a] of attempts)if(a.until<time)attempts.delete(ip);
   const a=attempts.get(key)||{count:0,until:time+600000};if(a.count>=8||attempts.size>10000)return json(res,429,{error:'Слишком много попыток. Повтори через 10 минут.'});a.count++;attempts.set(key,a);
   const b=await body(req);if(typeof b.password!=='string'||b.password.length>256||typeof b.username!=='string')return json(res,400,{error:'Проверь логин и пароль.'});
@@ -115,23 +155,30 @@ export function createPanel(config){
  if(stopping||active||!runner())return;const job=state.jobs.find(j=>j.status==='queued');if(!job)return;
  const dir=path.join(jobsDir,job.id);fs.mkdirSync(dir,{recursive:true,mode:0o700});atomic(path.join(dir,'request.json'),{contract_version:1,id:job.id,...job.request});job.status='running';job.started_at=now();save();
  const command=config.runner_command,env={...process.env};delete env.SMARTGRAM_PANEL_CONFIG;
- const child=spawn(command[0],[...command.slice(1),dir],{cwd:config.runner_cwd||dir,env,stdio:['ignore','ignore','ignore'],shell:false,detached:true});active=child;
- const stopGroup=()=>{try{process.kill(-child.pid,'SIGTERM');}catch{}};
- const timeout=setTimeout(()=>{finish(job,'failed','Превышен лимит обработки: 30 минут.');stopGroup();setTimeout(()=>{try{process.kill(-child.pid,'SIGKILL');}catch{}},5000).unref();},1800000);
- child.once('error',()=>{clearTimeout(timeout);finish(job,'failed','Не удалось запустить конвейер. Проверь подключение на сервере.');active=null;});
- child.once('close',async code=>{clearTimeout(timeout);try{
+ const child=spawn(command[0],[...command.slice(1),dir],{cwd:config.runner_cwd||dir,env,stdio:['ignore','ignore','ignore'],shell:false,detached:true});
+ const worker=superviseWorker(child);let settled,spawnFailed=false;
+ active={worker,settled:new Promise(resolve=>{settled=resolve;})};
+ child.once('error',()=>{spawnFailed=true;});
+ child.once('close',async code=>{try{
+   if(worker.reason==='timeout'){finish(job,'failed','Превышен лимит обработки: 30 минут.');return;}
    if(stopping){finish(job,'interrupted','Работа прервана остановкой сервиса. Автоматический платный повтор отключён.');return;}
+   if(spawnFailed)throw Error('Не удалось запустить конвейер. Проверь подключение на сервере.');
    if(code!==0)throw Error('Конвейер завершился с ошибкой. Технические подробности доступны администратору.');
    const result=JSON.parse(fs.readFileSync(secureFile(dir,'result.json'),'utf8'));if(result.status!=='completed'||result.quality_passed!==true)throw Error('Конвейер не подтвердил готовность и проверку ролика.');
    const filename=secureFile(dir,'video.mp4');if(fs.statSync(filename).size<32)throw Error('Готовый видеофайл отсутствует или пуст.');
    // An adapter must supply the accepted final MP4, not a scene or preview.
    await new Promise((resolve,reject)=>{let out='';const probe=spawn('/usr/bin/ffprobe',['-v','error','-show_entries','stream=codec_type,width,height:format=duration','-of','json',filename],{stdio:['ignore','pipe','ignore']});const timer=setTimeout(()=>{probe.kill('SIGKILL');reject(Error('Проверка видео превысила время ожидания.'));},15000);probe.stdout.on('data',d=>{if(out.length<64000)out+=d;});probe.on('error',()=>{clearTimeout(timer);reject(Error('FFprobe недоступен на сервере.'));});probe.on('close',code=>{clearTimeout(timer);try{const p=JSON.parse(out),[w,h]=job.request.output_size.split('x').map(Number),duration=Number(p.format?.duration);if(code!==0||!p.streams.some(s=>s.codec_type==='video'&&s.width===w&&s.height===h)||!p.streams.some(s=>s.codec_type==='audio')||!Number.isFinite(duration)||duration<1)throw Error();resolve();}catch{reject(Error('Готовый файл не прошёл проверку формата, изображения и звука.'));}});});
    finish(job,'completed',null);
- }catch(e){finish(job,'failed',e.message);}finally{active=null;setImmediate(tick);}});
+ }catch(e){finish(job,'failed',e.message);}finally{active=null;settled();setImmediate(tick);}});
  }
  const server=http.createServer({maxHeaderSize:16384},handle);server.requestTimeout=20000;server.headersTimeout=15000;server.keepAliveTimeout=5000;
  const timer=setInterval(tick,1500);timer.unref();
- async function close(){stopping=true;clearInterval(timer);if(active){try{process.kill(-active.pid,'SIGTERM');}catch{}}await new Promise(resolve=>server.close(resolve));}
+ async function close(){
+  stopping=true;clearInterval(timer);const current=active;
+  const httpClosed=new Promise(resolve=>server.close(resolve));
+  if(current){current.worker.stop('shutdown');await current.settled;}
+  await httpClosed;
+ }
  return {server,tick,close};
 }
 // ESM resolves symlinks in import.meta.url; systemd starts through current/.

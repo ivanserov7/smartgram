@@ -82,9 +82,11 @@ def estimate_components(call):
             if price is not None: add(name, qty, price)
     elif model in AUDIO_RATES:
         # Modalities have different rates; reasoning is already in the output total.
-        incoming = usage.get('input_token_details') or usage.get('prompt_tokens_details') or {}
-        outgoing = usage.get('output_token_details') or usage.get('completion_tokens_details') or {}
-        cached = count(incoming.get('cached_tokens'))
+        incoming = usage.get('input_tokens_details') or usage.get('input_token_details') or usage.get('prompt_tokens_details') or {}
+        outgoing = usage.get('output_tokens_details') or usage.get('output_token_details') or usage.get('completion_tokens_details') or {}
+        cached = count(units.get('cached_tokens'))
+        if cached is None:
+            cached = count(incoming.get('cached_tokens'))
         if cached:
             return {}, assumptions, ['Для аудио с кешем нет подтверждённого разбиения цены по модальностям.']
         if factor != 1: return {}, assumptions, ['Нет подтверждённого тарифа аудио для выбранного режима.']

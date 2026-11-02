@@ -53,6 +53,8 @@ def normalize_call(record,path,index,scope):
         project=scope.get('project_id');provenance['project_id']={'source':'confirmed_admin_scope','field':'api_key_ids membership'}
     usage=choose('usage',[('telemetry.usage',telemetry.get('usage')),('usage',record.get('usage')),('response.usage',raw.get('usage'))])
     tool_usage=choose('tool_usage',[('telemetry.tool_usage',telemetry.get('tool_usage')),('tool_usage',record.get('tool_usage')),('response.tool_usage',raw.get('tool_usage'))])
+    if any(value is not None and not isinstance(value,dict) for value in (usage,tool_usage)):
+        raise ValueError('Usage must be an object or unknown.')
     units=consumption(usage);web=billed_searches(tool_usage);units['web_requests']=web
     if web is not None:provenance['billed_web_requests']={**provenance['tool_usage'],'field':provenance['tool_usage']['field']+'.web_search.num_requests'}
     tools=telemetry.get('tools')
@@ -70,6 +72,8 @@ def normalize_call(record,path,index,scope):
         if elapsed>=0 and provenance.get('started_at_utc',{}).get('field') not in {'response.created_at','telemetry.created_at'}:
             duration=elapsed;provenance['duration_seconds']={'source':str(path),'field':'observed ended_at_utc - started_at_utc'}
     model=choose('model',[('telemetry.model',telemetry.get('model')),('model',record.get('model')),('response.model',raw.get('model'))])
+    if model is not None and not isinstance(model,str):
+        raise ValueError('Model identifier must be text or unknown.')
     tier=choose('service_tier',[('telemetry.service_tier',telemetry.get('service_tier')),('response.service_tier',raw.get('service_tier'))])
     batch=choose('batch',[('telemetry.batch',telemetry.get('batch')),('batch',record.get('batch'))])
     if batch is None and (telemetry or record.get('endpoint','').endswith('/responses')):
@@ -165,34 +169,37 @@ def import_calls(root,scope):
             records=json.loads(path.read_text())['requests']
             if not isinstance(records,list):raise ValueError
             for index,record in enumerate(records):
-                if not isinstance(record,dict):raise ValueError
-                if record.get('cache_hit') or record.get('request_count')==0:continue
-                if record.get('mode') in {'demo','test'} or record.get('simulation') is True:continue
-                if (record.get('provider') or object_value(record.get('telemetry')).get('provider') or 'openai')!='openai':continue
-                # A real saved run may explicitly mark the whole directory as synthetic.
                 try:
-                    run=json.loads((path.parent/'run.json').read_text())
-                    if run.get('mode') in {'demo','test'}:continue
-                except (OSError,ValueError):pass
-                call=normalize_call(record,path,index,scope)
-                keys=[(label,call[label]) for label in ['provider_response_id','provider_request_id','call_id'] if call.get(label)]
-                found={aliases[key] for key in keys if key in aliases}
-                # Distinct actual responses cannot be collapsed by a reused logical ID.
-                found={i for i in found if not (call.get('provider_response_id') and calls[i].get('provider_response_id') and call['provider_response_id']!=calls[i]['provider_response_id'])}
-                if len(found)>1:
-                    responses={calls[i].get('provider_response_id') for i in found if calls[i].get('provider_response_id')}
-                    if len(responses)<=1:
-                        keep=min(found)
-                        for other in sorted(found-{keep}):
-                            merge_calls(calls[keep],calls[other],warnings);calls[other]=None
-                            aliases={alias:(keep if target==other else target) for alias,target in aliases.items()}
-                        found={keep}
-                    else:
-                        warnings.append('Несогласованные идентификаторы одного вызова; связь не угадана.');call['missing_historical_fields'].append('conflicting_identity');found=set()
-                if found:
-                    number=next(iter(found));merge_calls(calls[number],call,warnings)
-                else:number=len(calls);calls.append(call)
-                for key in keys:aliases[key]=number
+                    if not isinstance(record,dict):raise ValueError
+                    if record.get('cache_hit') or record.get('request_count')==0:continue
+                    if record.get('mode') in {'demo','test'} or record.get('simulation') is True:continue
+                    if (record.get('provider') or object_value(record.get('telemetry')).get('provider') or 'openai')!='openai':continue
+                    # A real saved run may explicitly mark the whole directory as synthetic.
+                    try:
+                        run=json.loads((path.parent/'run.json').read_text())
+                        if run.get('mode') in {'demo','test'}:continue
+                    except (OSError,ValueError):pass
+                    call=normalize_call(record,path,index,scope)
+                    keys=[(label,call[label]) for label in ['provider_response_id','provider_request_id','call_id'] if call.get(label)]
+                    found={aliases[key] for key in keys if key in aliases}
+                    # Distinct actual responses cannot be collapsed by a reused logical ID.
+                    found={i for i in found if not (call.get('provider_response_id') and calls[i].get('provider_response_id') and call['provider_response_id']!=calls[i]['provider_response_id'])}
+                    if len(found)>1:
+                        responses={calls[i].get('provider_response_id') for i in found if calls[i].get('provider_response_id')}
+                        if len(responses)<=1:
+                            keep=min(found)
+                            for other in sorted(found-{keep}):
+                                merge_calls(calls[keep],calls[other],warnings);calls[other]=None
+                                aliases={alias:(keep if target==other else target) for alias,target in aliases.items()}
+                            found={keep}
+                        else:
+                            warnings.append('Несогласованные идентификаторы одного вызова; связь не угадана.');call['missing_historical_fields'].append('conflicting_identity');found=set()
+                    if found:
+                        number=next(iter(found));merge_calls(calls[number],call,warnings)
+                    else:number=len(calls);calls.append(call)
+                    for key in keys:aliases[key]=number
+                except (OSError, ValueError, KeyError, TypeError, AttributeError):
+                    warnings.append(f'Не удалось импортировать запись {index + 1} из {path}; полнота журнала не подтверждена.')
         except (OSError,ValueError,KeyError,TypeError,AttributeError):warnings.append(f'Не удалось полностью импортировать {path}; полнота журналов не подтверждена.')
     return [c for c in calls if c is not None],warnings
 

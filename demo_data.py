@@ -39,10 +39,6 @@ class DemoResponses:
         self.script_calls = 0
         self.check_calls = 0
 
-    def fetch_source(self, url):
-        return {"url": url, "status": "unavailable" if self.case == "unavailable" else "available",
-                "text": " ".join(DEMO_TEXTS), "reason": "Подставная недоступность источника." if self.case == "unavailable" else "",
-                "truncated": False, "mode": "demo"}
 
     def generate(self, schema, instructions, data):
         if schema is ScriptDraft:

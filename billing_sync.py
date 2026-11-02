@@ -12,7 +12,7 @@ from billing_api import BillingClient, BillingError, discover_scope, load_billin
 from billing_allocation import canonical_rows, classify, distribute, provider_quantity
 from billing_history import import_calls, ready_videos, run_metadata
 from billing_report import build_analytics, save_exports
-from file_io import atomic_write
+from file_io import atomic_write, json_lock
 from dotenv import dotenv_values
 from billing_api import ENV_PATH, local_secret_values
 
@@ -103,8 +103,14 @@ def pending_charges(snapshot):
 
 
 def sync_billing(directory=None, output_root=None, client_factory=BillingClient, force=True, now=None, offline=False):
+    """Сериализует снимок, распределение и пару JSON/HTML одного экспорта."""
     directory, root = Path(directory or BILLING_DIRECTORY), Path(output_root or OUTPUT_ROOT)
     directory.mkdir(parents=True, exist_ok=True)
+    with json_lock(directory / "sync_state.json"):
+        return _sync_billing(directory, root, client_factory, force, now, offline)
+
+
+def _sync_billing(directory, root, client_factory, force, now, offline):
     snapshot = read_optional(directory / "snapshot.json")
     state = {"status": "Ожидаем данные", "error": None,
              "last_success_at_utc": snapshot.get("synced_at_utc") if snapshot else None, "last_attempt_at_utc": now_iso()}

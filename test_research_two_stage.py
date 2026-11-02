@@ -69,7 +69,7 @@ class TwoStageResearchTests(unittest.TestCase):
 
     def test_one_fact_one_source_is_enough_without_page_downloads_or_quote_comparison(self):
         api = FakeTwoStageAPI()
-        with patch("source_reader.fetch_source", side_effect=AssertionError("Downloaded article")), \
+        with patch("httpx.Client.send", side_effect=AssertionError("Downloaded article")), \
              patch("research_evidence.validate_fact_quotes", side_effect=AssertionError("Compared quote")):
             result = self.run_case(api)
         validate_research(result)

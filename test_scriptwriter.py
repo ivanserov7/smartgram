@@ -157,11 +157,13 @@ class ScriptwriterTests(unittest.TestCase):
         self.responses = DemoResponses("repair")
         self.run_script()
         self.assertEqual(self.state()["revisions_used"], 1)
-        run_scriptwriter(self.research, self.root, self.generate, duration_feedback={"measured_duration_seconds": 52.1})
+        run_scriptwriter(self.research, self.root, self.generate, duration_feedback={
+            "measured_duration_seconds": 52.1, "script_version_id": approved_script(self.root)["script_version_id"]})
         self.assertEqual(self.state()["revisions_used"], 2)
         self.assertEqual(self.calls[-2][2]["feedback"]["duration"]["measured_duration_seconds"], 52.1)
         with self.assertRaisesRegex(ResearchError, "бюджет"):
-            run_scriptwriter(self.research, self.root, self.generate, duration_feedback={"measured_duration_seconds": 49})
+            run_scriptwriter(self.research, self.root, self.generate, duration_feedback={
+                "measured_duration_seconds": 49, "script_version_id": approved_script(self.root)["script_version_id"]})
         self.assertEqual(len(self.calls), 6)
         with self.assertRaises(ResearchError):
             approved_script(self.root)

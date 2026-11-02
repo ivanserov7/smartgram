@@ -41,6 +41,8 @@ def parse_arguments() -> argparse.Namespace:
         help="Показать план без вызовов API и создания видео",
     )
     arguments = parser.parse_args()
+    if arguments.demo and arguments.resume_production:
+        parser.error("--demo не поддерживается для --resume-production; используйте --dry-run для плана без API.")
     if arguments.production_stage != "all" and not arguments.resume_production:
         parser.error("--production-stage применяется только к --resume-production.")
     if arguments.stop_after and not (arguments.topic or arguments.research_file):

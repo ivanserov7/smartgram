@@ -16,6 +16,7 @@ from voice_factory import create_voice_api
 from voice_errors import AudioContractError, AudioAlignmentError, AudioTechnicalError, VoiceoverError, VoiceServiceError
 from voice_audio_checks import current_audio_checks
 from voice_settings import load_voiceover_settings
+from voice_lock import voice_lock
 
 
 def digest(value):
@@ -40,14 +41,18 @@ class VoiceoverRun:
         self.directory, self.settings, self.keys = Path(directory), settings, keys
         self.snapshot = settings.snapshot()
         self.path = self.directory / "voiceover_state.json"
-        self.state = read_json(self.path) if self.path.exists() else {
-            "schema_version": 3, "status": "running", "reason": None, "operations": {}, "jobs": [],
-            "regenerations_by_version": {}, "rejected_audio_hashes": []}
-        if self.state.get("schema_version") != 3 or not isinstance(self.state.get("operations"), dict):
-            raise VoiceoverError("Старое состояние озвучки несовместимо. Исходные файлы не изменены.")
+        self.state = self.load_state()
         self.api = api or create_voice_api(self.directory, settings, keys)
         self.manifest = {"schema_version": 3, "mode": "real", "status": "running", "reason": None,
                          "audio_kind": "ai_generated_speech", "duration_source": "measured_wav_frames", "fragments": []}
+
+    def load_state(self):
+        state = read_json(self.path) if self.path.exists() else {
+            "schema_version": 3, "status": "running", "reason": None, "operations": {}, "jobs": [],
+            "regenerations_by_version": {}, "rejected_audio_hashes": []}
+        if state.get("schema_version") != 3 or not isinstance(state.get("operations"), dict):
+            raise VoiceoverError("Старое состояние озвучки несовместимо. Исходные файлы не изменены.")
+        return state
 
     def save(self):
         atomic_write_json(self.path, self.state)
@@ -201,7 +206,18 @@ class VoiceoverRun:
         self.save()
         return review, mapped, words
 
-    def run(self, rewrite=None, comparison_mode=False):
+    def run(self, rewrite=None, comparison_mode=False, *, expected_script_version_id=None):
+        with voice_lock(self.directory):
+            # Another completed invocation may have written paid operations after
+            # this object was constructed. Never resume from that stale snapshot.
+            self.state = self.load_state()
+            if expected_script_version_id is not None:
+                current = approved_script(self.directory)
+                if current["script_version_id"] != expected_script_version_id:
+                    raise VoiceoverError("Approved script changed before voice execution; no API request sent.")
+            return self._run(rewrite, comparison_mode)
+
+    def _run(self, rewrite=None, comparison_mode=False):
         try:
             self.current_attempt = None
             saved=self.directory/'audio_manifest.json'
@@ -325,7 +341,7 @@ def voiceover_from_file(path, demo=False, *, expected_script_version_id=None):
     if expected_script_version_id is not None and script['script_version_id']!=expected_script_version_id:
         raise VoiceoverError('Approved script changed before parallel voice branch started; no API request sent.')
     keys, settings = load_voiceover_settings(require_keys=False)
-    path = VoiceoverRun(directory, settings, keys).run()
+    path = VoiceoverRun(directory, settings, keys).run(expected_script_version_id=expected_script_version_id)
     print(f"Полная озвучка и привязки: {path}", flush=True)
     return path
 

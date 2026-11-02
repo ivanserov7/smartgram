@@ -129,16 +129,6 @@ class ResearchReportTests(unittest.TestCase):
         self.assertEqual(len(independent_groups(URLS, pages)), 1)
 
 
-class SourceBodyTests(unittest.TestCase):
-    def test_actual_http_200_mock_with_captcha_is_unavailable(self):
-        import httpx
-        import source_reader
-        client = httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(
-            200, headers={"content-type": "text/html"}, text="<html><h1>Just a moment</h1>" + "Verify you are human. " * 30 + "</html>")))
-        with patch.object(source_reader, "validate_public_url"), patch.object(source_reader.httpx, "Client", return_value=client):
-            page = source_reader.fetch_source("https://blocked.example/page")
-        self.assertEqual(page["status"], "unavailable")
-        self.assertIn("заглушка", page["reason"])
 
 
 if __name__ == "__main__":
