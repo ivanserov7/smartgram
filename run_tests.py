@@ -1,4 +1,4 @@
-"""Run every Python regression with isolated telemetry and no external network."""
+"""Run pipeline and broker regressions without the separately installed MCP SDK."""
 
 import ipaddress
 import os
@@ -10,6 +10,14 @@ from pathlib import Path
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent
+
+
+class OfflineTestLoader(unittest.TestLoader):
+    """Keep SDK protocol tests in their mandatory, isolated CI environment."""
+
+    def _match_path(self, path, full_path, pattern):
+        # Exclude before import: the pipeline environment must not require the SDK.
+        return path != "test_mcp_http.py" and super()._match_path(path, full_path, pattern)
 
 
 def loopback(host):
@@ -65,7 +73,7 @@ def main():
          patch.dict(os.environ, environment, clear=True), \
          patch("openai_meter.DEFAULT_DIRECTORY", Path(telemetry_directory)), \
          offline_network():
-        suite = unittest.defaultTestLoader.discover(str(ROOT), pattern="test_*.py")
+        suite = OfflineTestLoader().discover(str(ROOT), pattern="test_*.py")
         result = unittest.TextTestRunner(verbosity=1).run(suite)
     return 0 if result.wasSuccessful() else 1
 

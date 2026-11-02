@@ -49,6 +49,11 @@ jobs:
         run: python server_infra/ci.py
       - name: Panel, progress and analytics regressions
         run: node --test server_infra/test_panel.mjs server_infra/test_progress.mjs web_analytics/test_costs.mjs
+      - name: Isolated MCP SDK protocol and authorization checks
+        run: |
+          python -m venv "$RUNNER_TEMP/smartgram-mcp-env"
+          "$RUNNER_TEMP/smartgram-mcp-env/bin/python" -m pip install -r server_infra/mcp_requirements.txt
+          "$RUNNER_TEMP/smartgram-mcp-env/bin/python" -m unittest test_mcp_admin test_mcp_http -q
   deploy:
     name: Publish to Timeweb
     needs: checks
